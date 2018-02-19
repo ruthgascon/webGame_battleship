@@ -163,7 +163,29 @@ $( document ).ready(function() {
 			};
 		});
 	}
+	
+	$('#addShip').on("click", function(){
+		var listOfShips = [{ "type": "Destroyer", "locations": ["A1", "B1", "C1"]},
+											 { "type": "Patrol boat", "locations": ["H5", "H6"] }];
+		sendShips(listOfShips);
+	});
 
+	function sendShips (ships){
+		$.ajax({
+			data: JSON.stringify(ships),
+			contentType: "application/json",
+			timeout: 1000,
+			type: 'POST',
+			url: '/api/games/players/'+gamePlayerID+'/ships'
+			//			statusCode: {
+			//				403: function() {
+			//					console.log ("DO SOMETHING");
+			//				}
+			//			}
+		}).done(function(data, textStatus, jqXHR){
+			location.reload();
+		})
+	}
 
 
 
