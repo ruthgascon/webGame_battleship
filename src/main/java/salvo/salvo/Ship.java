@@ -42,4 +42,8 @@ public class Ship {
     public String getType() {
         return type;
     }
+
+    public GamePlayer getGamePlayer() {
+        return gamePlayer;
+    }
 }

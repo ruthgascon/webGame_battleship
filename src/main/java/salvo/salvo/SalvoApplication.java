@@ -231,6 +231,7 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //        which URL paths should be secured and which should not
         http.authorizeRequests()
                 .antMatchers("/web/index.html", "/api/**", "/web/scripts/**","/web/styles/**", "/web/images/**").permitAll()
+
                 .antMatchers("/web/**").hasAuthority("player")
                 //it does the same at the line above
                 //.antMatchers("/web/**").authenticated()

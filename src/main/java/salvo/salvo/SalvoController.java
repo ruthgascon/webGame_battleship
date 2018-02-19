@@ -28,6 +28,9 @@ public class SalvoController {
     @Autowired
     private PlayerRepository playerRepository;
 
+    @Autowired
+    private ShipRepository shipRepository;
+
     ///////////////LARGEST OBJECT///////////////
     @RequestMapping("/games")
     public Map<String, Object> loggedIn() {
@@ -151,8 +154,6 @@ public class SalvoController {
         return dto;
     }
 
-
-
     @RequestMapping(path = "/players", method = RequestMethod.POST)
     public ResponseEntity<String> createUser(String username, String password) {
         Player player = playerRepository.findByUserName(username);
@@ -270,7 +271,6 @@ public class SalvoController {
         return dto;
     }
 
-    //it is not necessary
     private Map<String, List> makeFinalScoresDTO (Set<Score> scoreList) {
         Map<String, List> scoresList = new LinkedHashMap<>();
         List<Double> allScores = new ArrayList<>();
@@ -299,5 +299,33 @@ public class SalvoController {
         return total;
     }
 
+    @RequestMapping(path = "/games/players/{gamePlayerId}/ships")
+    public ResponseEntity<Map<String, Object>> getSetOfShips(@PathVariable Long gamePlayerId, Authentication authentication, @RequestBody Set<Ship> ships){
+        System.out.println(ships);
+        if (authentication == null) {
+            return new ResponseEntity<Map<String, Object>>(errorMap("NO GAME PLAYER", "Join a game"), HttpStatus.UNAUTHORIZED);
+
+        } else{
+            Player player = playerRepository.findByUserName(authentication.getName());
+            GamePlayer gameplayer = gamePlayerRepository.findOne(gamePlayerId);
+            if (gameplayer.getShips().size() != 0 || gameplayer.getId() != gamePlayerId || ships.size() > 5){
+//            if (gameplayer.getShips().size() != 0 || gameplayer.getId() !=) game{
+                return new ResponseEntity<Map<String, Object>>(errorMap("check again", "you are not that game player, ships already placed or too many ships"), HttpStatus.FORBIDDEN);
+            } else{
+                List<String> shipLocation = new ArrayList<>();
+
+                for (Ship ship : ships){
+                    List<String> locations = ship.getLocations();
+                    for (String location : locations){
+                        shipLocation.add(location);
+                    }
+                    String type = ship.getType();
+                    Ship newShip = new Ship(type, locations, gameplayer);
+                    shipRepository.save(newShip);
+                }
+                return new ResponseEntity<Map<String, Object>>(errorMap("CREATED", "Join a game"), HttpStatus.OK);
+            }
+        }
+    }
 
 }

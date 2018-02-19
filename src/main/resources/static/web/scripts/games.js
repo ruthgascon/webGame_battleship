@@ -187,4 +187,5 @@ $( document ).ready(function() {
 	function goToGame (GPID){
 		document.location.href = 'game.html?gp='+GPID ;
 	}
+
 });
