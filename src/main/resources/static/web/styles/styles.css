@@ -1,0 +1,299 @@
+body {
+	font-family: 'Quicksand', sans-serif;
+}
+
+h1 {
+	text-align: center;
+}
+
+h2 {
+	text-align: center;
+}
+
+h3{
+	margin-top: 12px;
+	/*	margin-bottom: ;*/
+}
+
+.centered {
+	text-decoration:  none;
+	display: flex;
+	justify-content: center;
+}
+
+.centeredContent {
+	text-align: center;
+}
+
+.hidden {
+	display: none;
+}
+
+.margin-bottom {
+	margin-bottom: 20px;
+}
+
+table {
+	text-align: center;
+	width: 500px;
+}
+
+table, th, td {
+	height: 30px;
+	border: 1px solid black;
+	border-collapse: collapse;
+}
+
+button {
+	/* margin-top: 20px; */
+	/* margin-bottom: 40px; */
+	width: 60px;
+	text-decoration: none;
+}
+
+/******LoadingSpace******/
+.loadingSpace {
+	margin-top: 50px;
+}
+
+.aproachShip {
+	margin-top: 20px;
+	height: 20px;
+	vertical-align: baseline;
+	-webkit-animation-name: aproach;
+	-webkit-animation-duration: 2s;
+	animation-name: aproach;
+	animation-duration: 2s;
+
+}
+
+@keyframes aproach {
+	from {height: 20px;}
+	to {height: 100px;}
+}
+
+@-webkit-keyframes aproach {
+	from {height: 20px;}
+	to {height: 100px;}
+}
+
+/******Index table = leaderboard******/
+.leaderboardTable{
+	margin-bottom: 20px;
+}
+
+.leaderboardTable thead{
+	background-color: #3399ff;
+	color: black;
+}
+
+.leaderboardTable tbody{
+	background-color: #cce6ff;
+	color: black;
+}
+
+/******Login Space******/
+.spaceLogin{
+	height: 50px;
+}
+
+input:-webkit-autofill {
+	-webkit-box-shadow: 0 0 0 1000px white inset !important;
+}
+
+#showPasswordLogin:hover {
+	cursor: pointer;
+}
+
+/******SignUp Space******/
+
+.signUp {
+	font-size: 12px;
+	color: deepskyblue;
+}
+
+.signUp:hover {
+	color: mediumblue;
+	cursor: pointer;
+}
+
+.modal {
+	display: none; /* Hidden by default */
+	position: fixed; /* Stay in place */
+	z-index: 1; /* Sit on top */
+	padding-top: 100px; /* Location of the box */
+	left: 0;
+	top: 0;
+	width: 100%; /* Full width */
+	height: 100%; /* Full height */
+	overflow: auto; /* Enable scroll if needed */
+	background-color: rgb(0,0,0); /* Fallback color */
+	background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+	position: relative;
+	background-color: #fefefe;
+	margin: auto;
+	padding: 0;
+	border: 1px solid #888;
+	width: 80%;
+	box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+	-webkit-animation-name: animatetop;
+	-webkit-animation-duration: 0.4s;
+	animation-name: animatetop;
+	animation-duration: 0.4s
+}
+
+/* Add Animation for Modal*/
+@-webkit-keyframes animatetop {
+	from {top:-300px; opacity:0} 
+	to {top:0; opacity:1}
+}
+
+@keyframes animatetop {
+	from {top:-300px; opacity:0}
+	to {top:0; opacity:1}
+}
+
+.close {
+	color: white;
+	float: right;
+	font-size: 28px;
+	font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+	color: #000;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.modal-header {
+	padding: 2px 16px;
+	/*	background-color: #5cb85c;*/
+	background-color: #ffe0b3;
+	color: white;
+}
+
+.modal-body {
+	padding: 20px 10px 5px 10px;
+}
+
+.modal-footer {
+	padding: 2px 16px;
+	background-color: #5cb85c;
+	color: white;
+}
+
+/******Games Table******/
+.gamesTable table{
+	width: 700px;
+}
+
+.gamesTable thead{
+	background-color: #ffcc00;
+}
+
+.gamesTable tbody{
+	background-color:  #fff0b3;
+}
+
+.newGameButton button{
+	margin-top: 20px;
+	width: 100px;
+	border-color: rgb(216, 216, 216) rgb(209, 209, 209) rgb(186, 186, 186);
+	border-style: solid;
+	border-width: 1px;
+	padding: 1px 7px 2px;
+}
+
+/******Games Table******/
+
+.gameTable {
+	margin: auto;
+	margin-bottom: 30px;
+}
+
+.gameTable tr {
+	height: 40px;
+	border: 1px solid #999999;
+	text-align: center;
+}
+
+.gameTable th {
+	background-color: #001a33;
+	width: 40px;
+	border: 1px solid #999999;
+	text-align: center;
+	color: #d9d9d9;
+}
+
+.gameTable td {
+	background-color: #003366;
+	width: 40px;
+	border: 1px solid #999999;
+	text-align: center;
+	color: #d9d9d9;
+}
+
+.coloredSubmarine {
+	background-color: yellow !important;
+}
+
+.coloredDestroyer {
+	background-color: #e6ffe6 !important;
+}
+
+.coloredPatrol {
+	background-color: #ffddcc !important;
+}
+
+.coloredBattleship {
+	background-color: #ffe699 !important;
+}
+
+.coloredCarrier {
+	background-color: #ccccff !important;
+}
+
+.salvoes div{
+	background-color: #e6e6ff;
+	width: 30px;
+	height: 30px;
+	margin: auto;
+	border-radius: 50px;
+}
+
+.hittedShip div{
+	background-color: #990000;
+	width: 30px;
+	height: 30px;
+	margin: auto;
+	border-radius: 50px;
+}
+
+.hittedShip div p{
+	color: white;
+	padding-top: 5px;
+}
+
+.joinButton{
+	color: cadetblue;
+}
+
+.joinButton:hover{
+	cursor: pointer;
+	color: white;
+}
+
+.toDo{
+	text-decoration:  none;
+	display: flex;
+	justify-content: center;
+	color: red;
+	font-weight: bold;
+}
+

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>games</title>
+		<link rel="stylesheet" href="styles/styles.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<!--		googlefont-->
+		<link href="https://fonts.googleapis.com/css?family=Quicksand" rel="stylesheet">
+		<!--		font awesome-->
+		<script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
+	</head>
+	<body>
+		<h1>Games!</h1>
+		<h3 id="greetings" class="hidden centered">Hello</h3>
+		<div id='loadingmessage' class="container-fluid loadingSpace">
+			<div class="centeredContent">
+				<p>loading data...</p>
+				<img class="aproachShip" src="images/ship.png">
+			</div>
+		</div>
+		<div id ="content" class="hidden">
+			<div class="centered margin-bottom">
+				<a href="index.html" >
+					<button><i class="fas fa-chevron-left "></i> BACK</button>
+				</a>
+			</div>
+			<div class="gamesTable centered" id="GamesTable"></div>
+			<div class="centered margin-bottom newGameButton">
+					<button id="newGameButton">NEW GAME</button>
+			</div>
+			
+				<p class="toDo">!!Avoid modifying table in every refresh!!</p>
+		</div>
+
+		<script src="scripts/games.js"></script>
+		<!--		moment script-->
+		<script src="scripts/moment.js"></script>
+		<script src="scripts/moment-with-locales.min.js"></script>
+
+	</body>
+</html>

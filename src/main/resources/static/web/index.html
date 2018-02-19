@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Salvo</title>
+		<link rel="stylesheet" href="styles/styles.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<!--		googlefont-->
+		<link href="https://fonts.googleapis.com/css?family=Quicksand" rel="stylesheet">
+		<!--		font awesome-->
+		<script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
+	</head>
+	<body>
+		<h1>SALVO!</h1>
+		<div id='loadingmessage' class="container-fluid loadingSpace">
+				<div class="centeredContent">
+					<p>loading data...</p>
+					<img class="aproachShip" src="images/ship.png">
+				</div>
+		</div>
+		<div id ="content" class="container-fluid hidden">
+			<div class="row">
+				<div align="center">
+					<div class="spaceLogin">
+						<form id="login-form" onsubmit="return false" class="hidden">
+							<label>Mail: <input type="text" name="username" id="username"></label>
+							<label>Password: <input type="password" id="passwordLogin"></label>
+							<span id="showPasswordLogin">
+								<i id="eyeOpenLogin" class="fas fa-eye" ></i>
+								<i id="eyeCloseLogin" class="fas fa-eye-slash hidden"></i>
+							</span>
+
+							<div id="signUp"class="signUp"><p>Do you want to create an account?</p></div>
+						</form>
+						<h3 id="greetings" class="hidden">Hello</h3>
+					</div>
+					<div id="loginform">
+						<button id="loginbutton">Log In</button>
+					</div>
+
+					<div class="hidden" id="logoutform">
+						<button id="logoutbutton">Log out</button>
+					</div>
+				</div>
+			</div>
+
+			<h2>Leaderboard</h2>
+			<div>
+				<div class="centered leaderboardTable"  id="leaderboardTable">
+				</div>
+			</div>
+			<div id="playButton" class="hidden">
+				<a href="games.html" class="centered">
+					<button>Play</button>
+				</a>
+			</div>
+		</div>
+
+		<!--		pop up window-->
+		<div id="myModal" class="modal container-fluid">
+			<div class="modal-content">
+				<div class="modal-header">
+					<span id="closeButton" class="close">&times;</span>
+					<h2>Create an account</h2>
+				</div>
+				<div class="modal-body">
+					<form id="signup-form" class="centered">
+						<label>Mail: <input type="text" id="usernameSignUp"></label>
+						<label>Password: <input type="password" id="passwordSignUp"></label>
+						<span id="showPasswordSignUp">
+							<i id="eyeOpenSignUp" class="fas fa-eye" ></i>
+							<i id="eyeCloseSignUp" class="fas fa-eye-slash hidden"></i>
+						</span>
+					</form>
+					<div class="centered margin-bottom-20">
+						<button id="signUpform">Sign Up</button>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+		<script src="scripts/index.js"></script>
+		<!--		moment script-->
+		<script src="scripts/moment.js"></script>
+		<script src="scripts/moment-with-locales.min.js"></script>
+
+	</body>
+</html>

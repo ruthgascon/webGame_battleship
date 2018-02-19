@@ -1,0 +1,96 @@
+h1{
+	text-align: center;
+	color: #666666 !important;
+}
+
+h2{
+	text-align: center;
+	color: #666666 !important;
+}
+
+.username  {
+	text-align: center;
+	font-size: 14px !important;
+	color: #666666;
+}
+
+.addShip {
+	text-align: center;
+	font-size: 20px !important;
+	color: #666666;
+	margin-top: 20px;
+}
+
+.infoTable {
+	background-color: #ffffff;
+	/*	border: 2px solid #999999;*/
+	margin: auto;
+	margin-bottom: 30px;
+}
+
+.infoTable tr {
+	height: 40px;
+	/*	border: 1px solid #999999;*/
+	text-align: center;
+}
+
+.infoTable th {
+	width: 40px;
+	/*	border: 1px solid #999999;*/
+	text-align: center;
+	color: #d9d9d9;
+}
+
+.infoTable td {
+	width: 40px;
+	border: 1px solid  #999999;
+	text-align: center;
+}
+
+.coloredSubmarine {
+	background-color: #e6ffff;
+}
+.coloredDestroyer {
+	background-color: #e6ffe6;
+}
+
+.coloredPatrol {
+	background-color: #ffddcc;
+}
+
+.coloredBattleship {
+	background-color: #ffe699;
+}
+
+.coloredCarrier {
+	background-color: #ccccff;
+}
+
+.hide{
+	display: none;
+}
+
+.salvoes div{
+	background-color: #e6e6ff;
+	width: 30px;
+	height: 30px;
+	margin: auto;
+	border-radius: 50px;
+}
+
+.hittedShip div{
+	background-color: #990000;
+	width: 30px;
+	height: 30px;
+	margin: auto;
+	border-radius: 50px;
+}
+
+.hittedShip div p{
+	color: white;
+  padding-top: 5px;
+}
+
+.hidden{
+	display: none;
+}

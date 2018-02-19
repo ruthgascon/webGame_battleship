@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Game information</title>
+		<link rel="stylesheet" href="styles/styles.css">
+		<!--		jquery script-->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<!--		font awesome-->
+		<script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
+		<!--		googlefont-->
+		<link href="https://fonts.googleapis.com/css?family=Quicksand" rel="stylesheet">
+	</head>
+	<body>
+		<h1>SHIP LOCATIONS</h1>
+		<div id='loadingmessage' class="container-fluid loadingSpace">
+				<div class="centeredContent">
+					<p>loading data...</p>
+					<img class="aproachShip" src="images/ship.png">
+				</div>
+		</div>
+		<div id ="content" class="hidden">
+			<div class="centered">
+				<a href="games.html" >
+					<button><i class="fas fa-chevron-left"></i> BACK</button>
+				</a>
+			</div>
+<!--			<h2>SHIP LOCATIONS</h2>-->
+			<p class="centered" id="User1">You: </p>
+			<p class="centered" id="User2"> </p>
+			<table class="gameTable" id="userTable">
+			</table>
+
+			<p class="addShip hidden centered" id="addShip">Add Ships +</p>
+			<h2 id="title">YOUR SALVOES</h2>
+			<table class="gameTable" id="salvoTable">
+			</table>
+		</div>
+		<script src="scripts/game.js"></script>
+	</body>
+</html>
