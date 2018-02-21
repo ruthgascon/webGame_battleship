@@ -2,4 +2,4 @@
 Battleship game. Technologies used: html, css & java
 
 ## Author
-Ruth Gascón Barba https://www.linkedin.com/in/ruthgascon/
+Ruth Gascón Barba www.ruthgascon.com
