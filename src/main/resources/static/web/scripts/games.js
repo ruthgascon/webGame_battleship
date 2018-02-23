@@ -69,6 +69,7 @@ $( document ).ready(function() {
 				} else {
 					var mail = eachGamePlayer.Email;
 				}
+			
 				var td = document.createElement('td');
 				var text = document.createTextNode(mail);
 				td.appendChild (text);
@@ -88,6 +89,7 @@ $( document ).ready(function() {
 						a.setAttribute("class", "joinButton");
 					}
 					row.append(tdEmpty);
+						
 				}
 			}
 			var td = document.createElement('td');

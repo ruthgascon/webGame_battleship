@@ -45,7 +45,6 @@ $( document ).ready(function() {
 							row.appendChild(column);
 							head.appendChild(row);
 							table.appendChild(head);
-							//						$("#userTable thead").addClass("noBorder");
 						}
 					} else {
 						if (i==1){
@@ -76,7 +75,7 @@ $( document ).ready(function() {
 				var shipsInfo = data.Ships;
 				console.log ("dataShips", data.Ships);
 				if (shipsInfo.length==0){
-					$("#addShip").removeClass("hidden");
+					$("#addShips").removeClass("hidden");
 				}
 				for (var y=0; y<shipsInfo.length; y++){
 					var oneShipInfo = shipsInfo[y];
@@ -164,7 +163,11 @@ $( document ).ready(function() {
 		});
 	}
 	
-	$('#addShip').on("click", function(){
+	$('#addShips').on("click", function(){
+		$('#sendShips').removeClass("hidden");
+	});
+
+	$('#sendShips').on("click", function(){
 		var listOfShips = [{ "type": "Destroyer", "locations": ["A1", "B1", "C1"]},
 											 { "type": "Patrol boat", "locations": ["H5", "H6"] }];
 		sendShips(listOfShips);
@@ -186,7 +189,5 @@ $( document ).ready(function() {
 			location.reload();
 		})
 	}
-
-
 
 });
