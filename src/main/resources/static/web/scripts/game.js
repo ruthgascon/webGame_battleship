@@ -31,6 +31,7 @@ $( document ).ready(function() {
 			}
 
 			function createTable (cells, table, cellsName){
+
 				var numberOfCells = cells;
 				var newLetter;
 				for (var i = 0; i<numberOfCells+1; i++){
@@ -63,6 +64,10 @@ $( document ).ready(function() {
 							var columns = document.createElement('td');
 							var numberOfCell = x+1
 							columns.setAttribute(cellsName, newLetter+numberOfCell);
+							if (cellsName == "userCell"){
+								columns.setAttribute("ondrop", "drop(event)");
+								columns.setAttribute("ondragover", "allowDrop(event)");
+							}						
 							row.appendChild (columns);
 						}
 						nextLetter = String.fromCharCode(newLetter.charCodeAt(0)+1);
@@ -162,14 +167,17 @@ $( document ).ready(function() {
 			};
 		});
 	}
-	
+
 	$('#addShips').on("click", function(){
 		$('#sendShips').removeClass("hidden");
 	});
 
 	$('#sendShips').on("click", function(){
-		var listOfShips = [{ "type": "Destroyer", "locations": ["A1", "B1", "C1"]},
-											 { "type": "Patrol boat", "locations": ["H5", "H6"] }];
+		var listOfShips = 
+				[
+				{ "type": "Destroyer", "locations": ["A1", "B1", "C1"]},
+				{ "type": "Patrol boat", "locations": ["H5", "H6"] }
+				];
 		sendShips(listOfShips);
 	});
 
@@ -189,5 +197,22 @@ $( document ).ready(function() {
 			location.reload();
 		})
 	}
-
 });
+
+///DRAG AND DROP
+
+function allowDrop(ev) {
+	ev.preventDefault();
+}
+
+function drag(ev) {
+	ev.dataTransfer.setData("text", ev.target.id);
+	var elementID = ev.target.id;
+	$('#'+elementID).addClass("dragging")
+}
+
+function drop(ev) {
+	ev.preventDefault();
+	var data = ev.dataTransfer.getData("text");
+	ev.target.appendChild(document.getElementById(data));
+}

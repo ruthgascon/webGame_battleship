@@ -30,19 +30,16 @@
 			</div>
 			<p class="centered" id="User1">You: </p>
 			<p class="centered" id="User2"> </p>
-			<!--			<div class="container-fluid">-->
-			<!--				<div class="row">-->
-			<!--					<div class="col-6">-->
 			<table class="gameTable" id="userTable">
 			</table>
 			<p class="addShips hidden centered" id="addShips">Add Ships +</p>
+
 			<div class="hidden centered" id="sendShips">
-				<div id="columns">
-					<div class="column" draggable="true"><header>A</header></div>
-					<div class="column" draggable="true"><header>B</header></div>
-					<div class="column" draggable="true"><header>C</header></div>
-				</div>
-				<div class="hidden">
+				<img id="drag1" class="shipToDrag" src="images/ship.png" draggable="true" ondragstart="drag(event)" width="336" height="69">
+				<img id="drag2" class="shipToDrag" src="images/ship.png" draggable="true" ondragstart="drag(event)" width="336" height="69">
+				<img id="drag3" class="shipToDrag" src="images/ship.png" draggable="true" ondragstart="drag(event)" width="336" height="69">
+
+				<div>
 					<p>Send Ships</p>
 				</div>
 			</div>
@@ -52,5 +49,7 @@
 			</table>
 		</div>
 		<script src="scripts/game.js"></script>
+		<script>
+			</script>
 	</body>
 </html>
