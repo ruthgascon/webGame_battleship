@@ -301,8 +301,9 @@ input:-webkit-autofill {
 }
 
 .shipToDrag img {
-	width: 45px;
+	width: 46px;
 	height: 40px;
+	margin: 0.2px;
 }
 
 #div1 {

@@ -78,21 +78,16 @@ $( document ).ready(function() {
 
 			function getShips (){
 				var shipsInfo = data.Ships;
-				console.log ("dataShips", data.Ships);
 				if (shipsInfo.length==0){
 					$("#addShips").removeClass("hidden");
 				}
 				for (var y=0; y<shipsInfo.length; y++){
 					var oneShipInfo = shipsInfo[y];
-					//				console.log (oneShipInfo);
 					var oneShipLocations = oneShipInfo.Locations;
-					//				console.log (oneShipLocations);
 					for (var x = 0; x<oneShipLocations.length; x++){
 
 						var thisClass = "colored"+(oneShipInfo.Type.split(" ", 1));
-						//					console.log ("thisClass",thisClass);
 						var location = oneShipLocations[x];
-						//					console.log ("location",location);
 						$("[usercell="+location+"]").addClass(thisClass);
 						$("[usercell="+location+"]").addClass("locatedShip");
 					}
@@ -200,8 +195,8 @@ $( document ).ready(function() {
 });
 
 ///DRAG AND DROP
-
 var dataOfTheShip;
+console.log (dataOfTheShip);
 var itIsInsideTheGrid;
 var position;
 
@@ -221,25 +216,23 @@ function drag(ev) {
 	var imageWidth = 45;
 	var xPosition = (Number(position) * imageWidth) + (imageWidth/2);
 	var xPosition = position * imageWidth + (imageWidth/2);
-	var dataName = ev.target.parentNode.getAttribute ("data-name");
+	var dataName = ev.target.parentNode.getAttribute("data-name");
 	setTheGhost (dataName, imageWidth, xPosition);
 	function setTheGhost (dataName, imageWidth, xPosition){
 		var ghost = document.getElementById(dataName);
 		ev.dataTransfer.setDragImage(ghost, xPosition, imageWidth/2);
-		//		if (itIsInsideTheGrid){
-		//			ev.dataTransfer.setDragImage(ghost, xPosition, imageWidth/2);
-		//		} else {
-		//			ev.dataTransfer.setDragImage(ghost, xPosition, imageWidth/2);
-		//		}
 	}
-
 }
 
 function drop(ev) {
-	ev.preventDefault();
-	var data = ev.dataTransfer.getData("text");
-	var cellInfo = ev.target;
-	calculatingCells (cellInfo);
+	if (dataOfTheShip){
+		ev.preventDefault();
+		var data = ev.dataTransfer.getData("text");
+		var cellInfo = ev.target;
+		calculatingCells (cellInfo);
+	}
+
+
 }
 
 function calculatingCells(cellInfo){
@@ -275,7 +268,7 @@ function printShip(longOfShip, cellNumber, color, kindOfShip, dataOfTheShip){
 		for (var i=0; i<longOfShip; i++){
 			var numberOfCell = number+i;
 			var finalCell = document.querySelector("[userCell='"+letter+numberOfCell+"']");
-			if(numberOfCell>10){
+			if(numberOfCell>10 || finalCell.hasAttribute("data-occupied")){
 				correctCell = false;
 			} else {
 				correctCell = true;
@@ -290,6 +283,7 @@ function printShip(longOfShip, cellNumber, color, kindOfShip, dataOfTheShip){
 			alert ("you can't put a ship here");
 		}
 	}
+
 	function printNewShip (){
 		for (var i=0; i<longOfShip; i++){
 			var numberOfCell = number+i;
@@ -306,13 +300,18 @@ function printShip(longOfShip, cellNumber, color, kindOfShip, dataOfTheShip){
 			finalCell.removeAttribute("ondragover", "allowDrop(event)");
 			finalCell.appendChild(image);
 			if (!itIsInsideTheGrid){
-				dataOfTheShip.style.position
-				dataOfTheShip.style.position ="absolute";
-				dataOfTheShip.style.top ="-666px";
+				dataOfTheShip.style.opacity = 0.5;
+				dataOfTheShip.removeAttribute("draggable", true);
+				dataOfTheShip.removeAttribute("ondragstart", "drag(event)");
 			}
 			newPosition++;
 		}
 	}
+	cleanData();
+}
+
+function cleanData(){
+	dataOfTheShip = undefined;
 }
 
 function removeFromTheGrid (kindOfShip, color){
@@ -321,6 +320,7 @@ function removeFromTheGrid (kindOfShip, color){
 		td.classList.remove(color);
 		td.classList.remove("shipToDrag");
 		td.removeAttribute("draggable", true);
+		td.setAttribute("draggable", false);
 		td.removeAttribute("ondragstart", "drag(event)");
 		td.removeAttribute("data-name", kindOfShip);
 		td.setAttribute("ondrop", "drop(event)");
