@@ -164,15 +164,35 @@ $( document ).ready(function() {
 	}
 
 	$('#addShips').on("click", function(){
+		$('#addShips').addClass("hidden");
 		$('#sendShips').removeClass("hidden");
+		$('#sendShipsButtonSpace').removeClass("hidden");
 	});
 
-	$('#sendShips').on("click", function(){
-		var listOfShips = 
-				[
-					{ "type": "Destroyer", "locations": ["A1", "B1", "C1"]},
-					{ "type": "Patrol boat", "locations": ["H5", "H6"] }
-				];
+	$('#sendShipsButton').on("click", function(){
+		var listOfShips = [];
+		var objectDestroyer = {type: "Destroyer", locations: []};
+		var objectSubmarine = {type: "Submarine", locations: []};
+		var objectCarrier = {type: "Carrier", locations: []};
+		var objectBattleShip = {type: "Battleship", locations: []};
+		var objectPatrolBoat = {type: "Patrol Boat", locations: []};
+		var x = $("[data-occupied=yes]");
+		for (var i = 0; i<x.length; i++){
+			var usercell = x[i].getAttribute("usercell");
+			var attribute = x[i].getAttribute("data-name");
+			if (attribute == "Destroyer"){
+				objectDestroyer.locations.push(usercell);
+			} else if(attribute == "Submarine"){
+				objectSubmarine.locations.push(usercell);
+			} else if(attribute == "Carrier"){
+				objectCarrier.locations.push(usercell);
+			} else if(attribute == "BattleShip"){
+				objectBattleShip.locations.push(usercell);
+			} else if(attribute == "PatrolBoat"){
+				objectPatrolBoat.locations.push(usercell);
+			} 
+		}
+		listOfShips.push(objectDestroyer, objectSubmarine, objectCarrier, objectBattleShip, objectPatrolBoat);
 		sendShips(listOfShips);
 	});
 
@@ -183,11 +203,6 @@ $( document ).ready(function() {
 			timeout: 1000,
 			type: 'POST',
 			url: '/api/games/players/'+gamePlayerID+'/ships'
-			//			statusCode: {
-			//				403: function() {
-			//					console.log ("DO SOMETHING");
-			//				}
-			//			}
 		}).done(function(data, textStatus, jqXHR){
 			location.reload();
 		})
@@ -196,7 +211,6 @@ $( document ).ready(function() {
 
 ///DRAG AND DROP
 var dataOfTheShip;
-console.log (dataOfTheShip);
 var itIsInsideTheGrid;
 var position;
 
@@ -231,8 +245,6 @@ function drop(ev) {
 		var cellInfo = ev.target;
 		calculatingCells (cellInfo);
 	}
-
-
 }
 
 function calculatingCells(cellInfo){

@@ -316,3 +316,9 @@ input:-webkit-autofill {
 .dragging{
 	background-color: yellow;
 }
+
+#sendShipsButtonSpace button{
+	margin-top: 10px;
+	width: 300px;
+	margin-bottom: 20px;
+}
