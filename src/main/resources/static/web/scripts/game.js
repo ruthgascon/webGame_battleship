@@ -175,8 +175,8 @@ $( document ).ready(function() {
 	$('#sendShips').on("click", function(){
 		var listOfShips = 
 				[
-				{ "type": "Destroyer", "locations": ["A1", "B1", "C1"]},
-				{ "type": "Patrol boat", "locations": ["H5", "H6"] }
+					{ "type": "Destroyer", "locations": ["A1", "B1", "C1"]},
+					{ "type": "Patrol boat", "locations": ["H5", "H6"] }
 				];
 		sendShips(listOfShips);
 	});
@@ -201,18 +201,131 @@ $( document ).ready(function() {
 
 ///DRAG AND DROP
 
+var dataOfTheShip;
+var itIsInsideTheGrid;
+var position;
+
 function allowDrop(ev) {
 	ev.preventDefault();
 }
 
 function drag(ev) {
 	ev.dataTransfer.setData("text", ev.target.id);
-	var elementID = ev.target.id;
-	$('#'+elementID).addClass("dragging")
+	dataOfTheShip = ev.currentTarget;
+	if (dataOfTheShip.tagName == "DIV"){
+		itIsInsideTheGrid = false;
+	} else {
+		itIsInsideTheGrid = true;
+	}
+	position = ev.target.getAttribute("data-position");
+	var imageWidth = 45;
+	var xPosition = (Number(position) * imageWidth) + (imageWidth/2);
+	var xPosition = position * imageWidth + (imageWidth/2);
+	var dataName = ev.target.parentNode.getAttribute ("data-name");
+	setTheGhost (dataName, imageWidth, xPosition);
+	function setTheGhost (dataName, imageWidth, xPosition){
+		var ghost = document.getElementById(dataName);
+		ev.dataTransfer.setDragImage(ghost, xPosition, imageWidth/2);
+		//		if (itIsInsideTheGrid){
+		//			ev.dataTransfer.setDragImage(ghost, xPosition, imageWidth/2);
+		//		} else {
+		//			ev.dataTransfer.setDragImage(ghost, xPosition, imageWidth/2);
+		//		}
+	}
+
 }
 
 function drop(ev) {
 	ev.preventDefault();
 	var data = ev.dataTransfer.getData("text");
-	ev.target.appendChild(document.getElementById(data));
+	var cellInfo = ev.target;
+	calculatingCells (cellInfo);
+}
+
+function calculatingCells(cellInfo){
+	var kindOfShip = dataOfTheShip.getAttribute("data-name");
+	var cellNumber = cellInfo.getAttribute("userCell");
+	if (kindOfShip == "Destroyer"){
+		printShip (3, cellNumber, "coloredDestroyer", kindOfShip, dataOfTheShip);
+	} else if(kindOfShip == "Submarine"){
+		printShip(3, cellNumber, "coloredSubmarine", kindOfShip, dataOfTheShip);
+	} else if (kindOfShip == "Carrier"){
+		printShip(5, cellNumber, "coloredCarrier", kindOfShip, dataOfTheShip);
+	} else if (kindOfShip == "BattleShip"){
+		printShip(4, cellNumber, "coloredBattleship", kindOfShip, dataOfTheShip);
+	} else if (kindOfShip == "PatrolBoat"){
+		printShip(2, cellNumber, "coloredPatrol", kindOfShip, dataOfTheShip);
+	}
+}
+
+function printShip(longOfShip, cellNumber, color, kindOfShip, dataOfTheShip){
+	var correctCell = false;
+	var letter = cellNumber.split("")[0];
+	var num1 = cellNumber.split("")[1];
+	var num2 = cellNumber.split("")[2];
+	if (num2){
+		var finalNum = num1+num2;
+	} else {
+		var finalNum = num1;
+	}
+	var number = Number(finalNum)-position;
+	var newPosition = 0;
+	checkCells();
+	function checkCells (){
+		for (var i=0; i<longOfShip; i++){
+			var numberOfCell = number+i;
+			var finalCell = document.querySelector("[userCell='"+letter+numberOfCell+"']");
+			if(numberOfCell>10){
+				correctCell = false;
+			} else {
+				correctCell = true;
+			}
+		}
+		if (correctCell == true){
+			if (itIsInsideTheGrid){
+				removeFromTheGrid(kindOfShip, color);
+			};
+			printNewShip();
+		} else {
+			alert ("you can't put a ship here");
+		}
+	}
+	function printNewShip (){
+		for (var i=0; i<longOfShip; i++){
+			var numberOfCell = number+i;
+			var finalCell = document.querySelector("[userCell='"+letter+numberOfCell+"']");
+			var image= document.createElement("img");
+			image.setAttribute("src", "images/ship.png");
+			image.setAttribute("data-position", newPosition);
+			finalCell.classList.add("shipToDrag", color);
+			finalCell.setAttribute("draggable", true);
+			finalCell.setAttribute("ondragstart", "drag(event)");
+			finalCell.setAttribute("data-name", kindOfShip);
+			finalCell.setAttribute("data-occupied", "yes");
+			finalCell.removeAttribute("ondrop", "drop(event)");
+			finalCell.removeAttribute("ondragover", "allowDrop(event)");
+			finalCell.appendChild(image);
+			if (!itIsInsideTheGrid){
+				dataOfTheShip.style.position
+				dataOfTheShip.style.position ="absolute";
+				dataOfTheShip.style.top ="-666px";
+			}
+			newPosition++;
+		}
+	}
+}
+
+function removeFromTheGrid (kindOfShip, color){
+	var a = document.querySelectorAll('td[data-name='+kindOfShip+']');
+	for (var td of a){
+		td.classList.remove(color);
+		td.classList.remove("shipToDrag");
+		td.removeAttribute("draggable", true);
+		td.removeAttribute("ondragstart", "drag(event)");
+		td.removeAttribute("data-name", kindOfShip);
+		td.setAttribute("ondrop", "drop(event)");
+		td.removeAttribute("data-occupied", "yes");
+		td.setAttribute("ondragover", "allowDrop(event)");
+		td.removeChild(td.children["0"]);
+	}
 }

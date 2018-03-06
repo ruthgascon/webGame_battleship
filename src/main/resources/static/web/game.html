@@ -35,11 +35,39 @@
 			<p class="addShips hidden centered" id="addShips">Add Ships +</p>
 
 			<div class="hidden centered" id="sendShips">
-				<img id="drag1" class="shipToDrag" src="images/ship.png" draggable="true" ondragstart="drag(event)" width="336" height="69">
-				<img id="drag2" class="shipToDrag" src="images/ship.png" draggable="true" ondragstart="drag(event)" width="336" height="69">
-				<img id="drag3" class="shipToDrag" src="images/ship.png" draggable="true" ondragstart="drag(event)" width="336" height="69">
+				<div  id="Destroyer" class="shipToDrag shipToDrag3 coloredDestroyer" draggable="true" ondragstart="drag(event)" data-name="Destroyer">
+					<img src="images/ship.png" data-position=0><!--
+--><img src="images/ship.png" data-position=1><!--
+--><img src="images/ship.png" data-position=2>
+				</div>
+				<div id="Submarine" class="shipToDrag shipToDrag3 coloredSubmarine" draggable="true" ondragstart="drag(event)" data-name="Submarine">
+					<img src="images/ship.png" data-position=0><!--
+--><img src="images/ship.png" data-position=1><!--
+--><img src="images/ship.png" data-position=2>
+				</div>
+				<div id="Carrier" class="shipToDrag shipToDrag5 coloredCarrier" draggable="true" ondragstart="drag(event)" data-name="Carrier">
+					<img src="images/ship.png" data-position=0><!--
+--><img src="images/ship.png" data-position=1><!--
+--><img src="images/ship.png" data-position=2><!--
+--><img src="images/ship.png" data-position=3><!--
+--><img src="images/ship.png" data-position=4>
+				</div>
+				<div id="BattleShip" class="shipToDrag shipToDrag4 coloredBattleship" draggable="true" ondragstart="drag(event)" data-name="BattleShip">
+					<img src="images/ship.png" data-position=0><!--
+--><img src="images/ship.png" data-position=1><!--
+--><img src="images/ship.png" data-position=2><!--
+--><img src="images/ship.png" data-position=3>
+				</div>
+<!--				<div>-->
 
-				<div>
+
+					<div id="PatrolBoat" class="shipToDrag shipToDrag2 coloredPatrol" draggable="true" ondragstart="drag(event)" width="336" height="69" data-name="PatrolBoat">
+						<img src="images/ship.png" data-position = 0><!--
+--><img src="images/ship.png" data-position=1>
+					</div>
+<!--				</div>-->
+
+				<div class="hidden">
 					<p>Send Ships</p>
 				</div>
 			</div>
@@ -50,6 +78,6 @@
 		</div>
 		<script src="scripts/game.js"></script>
 		<script>
-			</script>
+		</script>
 	</body>
 </html>
