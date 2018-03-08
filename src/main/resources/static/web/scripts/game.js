@@ -223,68 +223,90 @@ var itIsInsideTheGrid;
 var position;
 var long;
 var forbidden = false;
+//
+//var allShips = document.getElementsByClassName("shipToDrag");
+//
+//for (var i = 0; i<allShips.length; i++){
+//	console.log (allShips[i]);
+//	allShips[i].addEventListener('dblclick', function(){ 
+//		console.log ("hola");
+//	})
+//}
 
 document.addEventListener("dragenter", function(ev) {
-	var cellToBe = ev.target;
-
-	if (elementDragging.tagName == "TD"){
-		elementDragging.removeAttribute("data-occupied");
-//		console.log ("elementDragging on DRAGENTER", elementDragging);
-		return
-	}
 	takeLongOfShip(elementDragging);
+	if (elementDragging){
+		if (elementDragging.tagName == "TD"){
+			var cell = elementDragging.getAttribute("usercell");
+			var letter = cell.split("")[0];
+			var num1 = cell.split("")[1];
+			var num2 = cell.split("")[2];
+			if (num2){
+				var finalNum = num1+num2;
+			} else {
+				var finalNum = num1;
+			}
+			var number = Number(finalNum)-position;
+			var newPosition = 0;
+			removeDataOccupied();
+			function removeDataOccupied (){
+				for (var i=0; i<long; i++){
+					var numberOfCell = number+i;
+					var finalCell = document.querySelector("[userCell='"+letter+numberOfCell+"']");
+					finalCell.removeAttribute("data-occupied");
+				}
+			}
+		}
+	}
+
 }, false);
 
 document.addEventListener("dragover", function(ev) {
-	if (ev.target.tagName == "TD"){
-		var cell = ev.target.getAttribute("usercell");
-
-		var letter = cell.split("")[0];
-		var num1 = cell.split("")[1];
-		var num2 = cell.split("")[2];
-		if (num2){
-			var finalNum = num1+num2;
-		} else {
-			var finalNum = num1;
-		}
-		var number = Number(finalNum)-position;
-		var newPosition = 0;
-		checkCells();
-
-		function checkCells (){
-
-			for (var i=0; i<long; i++){
-				var numberOfCell = number+i;
-				var finalCell = document.querySelector("[userCell='"+letter+numberOfCell+"']");
-				if(numberOfCell>10 || numberOfCell <1){
-					forbidden = true;
-					return
-				} else if (finalCell.getAttribute("data-occupied")=="yes"){
-					forbidden = true;
-					return
-				} else if (elementDragging.getAttribute("style") == "opacity: 0.5;"){
-				
-					forbidden = true;
-				}else {
-//					console.log (elementDragging);
-//					console.log (elementDragging.getAttribute("style"));
-					forbidden = false;
-				}
-			}
-			if (forbidden){
-				paintTheCellsDuringDrag(ev, "");
-				alert ("You have already put this ship");
-				
-				return
+	if (elementDragging){
+		if (ev.target.tagName == "DIV" && elementDragging.getAttribute("style") == "opacity: 0.5;"){
+			forbidden = true;
+		} else if (ev.target.tagName == "TD"){
+			var cell = ev.target.getAttribute("usercell");
+			var letter = cell.split("")[0];
+			var num1 = cell.split("")[1];
+			var num2 = cell.split("")[2];
+			if (num2){
+				var finalNum = num1+num2;
 			} else {
-				paintTheCellsDuringDrag(ev, "green");
+				var finalNum = num1;
+			}
+			var number = Number(finalNum)-position;
+			var newPosition = 0;
+			checkCells();
+			function checkCells (){
+				for (var i=0; i<long; i++){
+					var numberOfCell = number+i;
+					var finalCell = document.querySelector("[userCell='"+letter+numberOfCell+"']");
+					if(numberOfCell>10 || numberOfCell <1){
+						forbidden = true;
+					} else if (finalCell.getAttribute("data-occupied")=="yes"){
+						forbidden = true;
+					} else if (elementDragging.getAttribute("style") == "opacity: 0.5;"){
+						forbidden = true;
+					}else {
+						forbidden = false;
+					}
+				}
+				if (forbidden){
+					paintTheCellsDuringDrag(ev, "");
+					return
+				} else {
+					paintTheCellsDuringDrag(ev, "green");
+				}
 			}
 		}
 	}
+
 }, false);
 
 document.addEventListener("dragleave", function(ev) {
 	paintTheCellsDuringDrag(ev, "");
+	//	cleanData();
 }, false);
 
 function allowDrop(ev) {
@@ -292,17 +314,19 @@ function allowDrop(ev) {
 }
 
 function takeLongOfShip (elementDragging){
-	var kindOfShip = elementDragging.getAttribute("data-name");
-	if (kindOfShip == "Destroyer"){
-		long = 3;
-	} else if(kindOfShip == "Submarine"){
-		long = 3;
-	} else if (kindOfShip == "Carrier"){
-		long = 5;
-	} else if (kindOfShip == "BattleShip"){
-		long = 4;
-	} else if (kindOfShip == "PatrolBoat"){
-		long = 2;
+	if (elementDragging){
+		var kindOfShip = elementDragging.getAttribute("data-name");
+		if (kindOfShip == "Destroyer"){
+			long = 3;
+		} else if(kindOfShip == "Submarine"){
+			long = 3;
+		} else if (kindOfShip == "Carrier"){
+			long = 5;
+		} else if (kindOfShip == "BattleShip"){
+			long = 4;
+		} else if (kindOfShip == "PatrolBoat"){
+			long = 2;
+		}
 	}
 }
 
@@ -361,47 +385,33 @@ function drop(ev) {
 	ev.preventDefault();
 	if (elementDragging){
 		var cellInfo = ev.target;
-		calculatingCells (cellInfo);
+		var kindOfShip = elementDragging.getAttribute("data-name");
+		calculatingCells (cellInfo, kindOfShip);
 	}
 }
 
-function calculatingCells(cellInfo){
-	var kindOfShip = elementDragging.getAttribute("data-name");
-	var cellNumber = cellInfo.getAttribute("userCell");
+function calculatingCells(cellInfo, kindOfShip){
+
 	if (kindOfShip == "Destroyer"){
-		printShip (3, cellNumber, "coloredDestroyer", kindOfShip, elementDragging);
+		checkCells (3, cellInfo, "coloredDestroyer", kindOfShip, elementDragging);
 	} else if(kindOfShip == "Submarine"){
-		printShip(3, cellNumber, "coloredSubmarine", kindOfShip, elementDragging);
+		checkCells(3, cellInfo, "coloredSubmarine", kindOfShip, elementDragging);
 	} else if (kindOfShip == "Carrier"){
-		printShip(5, cellNumber, "coloredCarrier", kindOfShip, elementDragging);
+		checkCells(5, cellInfo, "coloredCarrier", kindOfShip, elementDragging);
 	} else if (kindOfShip == "BattleShip"){
-		printShip(4, cellNumber, "coloredBattleship", kindOfShip, elementDragging);
+		checkCells(4, cellInfo, "coloredBattleship", kindOfShip, elementDragging);
 	} else if (kindOfShip == "PatrolBoat"){
-		printShip(2, cellNumber, "coloredPatrol", kindOfShip, elementDragging);
+		checkCells(2, cellInfo, "coloredPatrol", kindOfShip, elementDragging);
 	}
 }
 
-function printShip(longOfShip, cellNumber, color, kindOfShip, elementDragging){
-	//	var letter = cellNumber.split("")[0];
-	//	var num1 = cellNumber.split("")[1];
-	//	var num2 = cellNumber.split("")[2];
-	//	if (num2){
-	//		var finalNum = num1+num2;
-	//	} else {
-	//		var finalNum = num1;
-	//	}
-	//	var number = Number(finalNum)-position;
-	//	var newPosition = 0;
-	checkCells();
-
-	function checkCells (){
-//		console.log (elementDragging);
-		if (forbidden == false){
-			if (itIsInsideTheGrid){
-				removeFromTheGrid(kindOfShip, color);
-			};
-			printNewShip();
-		}
+function checkCells(longOfShip, cellInfo, color, kindOfShip, elementDragging){
+	var cellNumber = cellInfo.getAttribute("userCell");
+	if (forbidden == false){
+		if (itIsInsideTheGrid){
+			removeFromTheGrid(kindOfShip, color);
+		};
+		printNewShip();
 	}
 
 	function printNewShip (){
@@ -414,31 +424,78 @@ function printShip(longOfShip, cellNumber, color, kindOfShip, elementDragging){
 			var finalNum = num1;
 		}
 		var number = Number(finalNum)-position;
-		var newPosition = 0;
-		for (var i=0; i<longOfShip; i++){
-			var numberOfCell = number+i;
-			var finalCell = document.querySelector("[userCell='"+letter+numberOfCell+"']");
-			var image= document.createElement("img");
-			image.setAttribute("src", "images/ship.png");
-			image.setAttribute("data-position", newPosition);
-			finalCell.classList.add("shipToDrag", color);
-			finalCell.setAttribute("draggable", true);
-			finalCell.setAttribute("position", "horizontal");
-			finalCell.setAttribute("ondragstart", "drag(event)");
-			finalCell.setAttribute("data-name", kindOfShip);
-			finalCell.setAttribute("data-occupied", "yes");
-			finalCell.removeAttribute("ondrop", "drop(event)");
-			finalCell.removeAttribute("ondragover", "allowDrop(event)");
-			finalCell.appendChild(image);
-			if (!itIsInsideTheGrid){
-				elementDragging.style.opacity = 0.5;
-				elementDragging.removeAttribute("draggable", true);
-				elementDragging.removeAttribute("ondragstart", "drag(event)");
-			}
-			newPosition++;
+		if (cellInfo.getAttribute("position") == "vertical"){
+			console.log ("vertical");
+			changeTheLetter();
+		} else {
+			console.log ("horizontal");
+			changeTheNumber();
 		}
+
+		function changeTheLetter(){
+			var newPosition = 0;
+			var name = cellInfo.getAttribute("data-name");
+			removeFromTheGrid (name, color)
+			for (var i=0; i<longOfShip; i++){
+				var numberOfCell = number+i;
+				var finalCell = document.querySelector("[userCell='"+letter+number+"']");
+				var image= document.createElement("img");
+				image.setAttribute("src", "images/ship.png");
+				image.setAttribute("data-position", newPosition);
+				finalCell.classList.add("shipToDrag", color);
+				finalCell.setAttribute("draggable", true);
+				finalCell.setAttribute("position", "vertical");
+				finalCell.setAttribute("ondragstart", "drag(event)");
+				finalCell.setAttribute("data-name", kindOfShip);
+				finalCell.setAttribute("data-occupied", "yes");
+				finalCell.removeAttribute("ondrop", "drop(event)");
+				finalCell.removeAttribute("ondragover", "allowDrop(event)");
+				finalCell.appendChild(image);
+				finalCell.addEventListener('dblclick', function(){ 
+					changeOrientation(this);
+				})
+
+				function nextChar(letter) {
+					return String.fromCharCode(letter.charCodeAt(0) + 1);
+				}
+
+				letter = nextChar(letter);
+				newPosition++;
+
+			}
+		}
+
+		function changeTheNumber(){
+			var newPosition = 0;
+			for (var i=0; i<longOfShip; i++){
+				var numberOfCell = number+i;
+				var finalCell = document.querySelector("[userCell='"+letter+numberOfCell+"']");
+				var image= document.createElement("img");
+				image.setAttribute("src", "images/ship.png");
+				image.setAttribute("data-position", newPosition);
+				finalCell.classList.add("shipToDrag", color);
+				finalCell.setAttribute("draggable", true);
+				finalCell.setAttribute("position", "horizontal");
+				finalCell.setAttribute("ondragstart", "drag(event)");
+				finalCell.setAttribute("data-name", kindOfShip);
+				finalCell.setAttribute("data-occupied", "yes");
+				finalCell.removeAttribute("ondrop", "drop(event)");
+				finalCell.removeAttribute("ondragover", "allowDrop(event)");
+				finalCell.appendChild(image);
+				finalCell.addEventListener('dblclick', function(){ 
+					changeOrientation(this);
+				})
+				if (elementDragging && !itIsInsideTheGrid){
+					elementDragging.style.opacity = 0.5;
+					elementDragging.removeAttribute("draggable", true);
+					elementDragging.removeAttribute("ondragstart", "drag(event)");
+				}
+				newPosition++;
+			}
+		}
+
 	}
-//		cleanData();
+	cleanData();
 }
 
 function cleanData(){
@@ -460,4 +517,14 @@ function removeFromTheGrid (kindOfShip, color){
 		td.setAttribute("ondragover", "allowDrop(event)");
 		td.removeChild(td.children["0"]);
 	}
+}
+
+function changeOrientation(element){
+	if (element.getAttribute("position")=="vertical"){
+		element.setAttribute("position", "horizontal");
+	} else if (element.getAttribute("position")=="horizontal"){
+		element.setAttribute("position", "vertical");
+	}
+	var kindOfShip = element.getAttribute("data-name");
+	calculatingCells(element, kindOfShip);
 }
