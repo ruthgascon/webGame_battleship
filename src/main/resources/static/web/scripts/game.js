@@ -193,7 +193,15 @@ $( document ).ready(function() {
 			} 
 		}
 		listOfShips.push(objectDestroyer, objectSubmarine, objectCarrier, objectBattleShip, objectPatrolBoat);
-		sendShips(listOfShips);
+		//		console.log (listOfShips);
+		for (var i =0; i<listOfShips.length; i++){
+			if (listOfShips[i].locations.length == 0){
+				alert ("put all the ships!");
+				return;
+			} else {
+				sendShips(listOfShips);
+			}
+		}
 	});
 
 	function sendShips (ships){
@@ -210,93 +218,203 @@ $( document ).ready(function() {
 });
 
 ///DRAG AND DROP
-var dataOfTheShip;
+var elementDragging;
 var itIsInsideTheGrid;
 var position;
+var long;
+var forbidden = false;
+
+document.addEventListener("dragenter", function(ev) {
+	var cellToBe = ev.target;
+
+	if (elementDragging.tagName == "TD"){
+		elementDragging.removeAttribute("data-occupied");
+//		console.log ("elementDragging on DRAGENTER", elementDragging);
+		return
+	}
+	takeLongOfShip(elementDragging);
+}, false);
+
+document.addEventListener("dragover", function(ev) {
+	if (ev.target.tagName == "TD"){
+		var cell = ev.target.getAttribute("usercell");
+
+		var letter = cell.split("")[0];
+		var num1 = cell.split("")[1];
+		var num2 = cell.split("")[2];
+		if (num2){
+			var finalNum = num1+num2;
+		} else {
+			var finalNum = num1;
+		}
+		var number = Number(finalNum)-position;
+		var newPosition = 0;
+		checkCells();
+
+		function checkCells (){
+
+			for (var i=0; i<long; i++){
+				var numberOfCell = number+i;
+				var finalCell = document.querySelector("[userCell='"+letter+numberOfCell+"']");
+				if(numberOfCell>10 || numberOfCell <1){
+					forbidden = true;
+					return
+				} else if (finalCell.getAttribute("data-occupied")=="yes"){
+					forbidden = true;
+					return
+				} else if (elementDragging.getAttribute("style") == "opacity: 0.5;"){
+				
+					forbidden = true;
+				}else {
+//					console.log (elementDragging);
+//					console.log (elementDragging.getAttribute("style"));
+					forbidden = false;
+				}
+			}
+			if (forbidden){
+				paintTheCellsDuringDrag(ev, "");
+				alert ("You have already put this ship");
+				
+				return
+			} else {
+				paintTheCellsDuringDrag(ev, "green");
+			}
+		}
+	}
+}, false);
+
+document.addEventListener("dragleave", function(ev) {
+	paintTheCellsDuringDrag(ev, "");
+}, false);
 
 function allowDrop(ev) {
 	ev.preventDefault();
 }
 
+function takeLongOfShip (elementDragging){
+	var kindOfShip = elementDragging.getAttribute("data-name");
+	if (kindOfShip == "Destroyer"){
+		long = 3;
+	} else if(kindOfShip == "Submarine"){
+		long = 3;
+	} else if (kindOfShip == "Carrier"){
+		long = 5;
+	} else if (kindOfShip == "BattleShip"){
+		long = 4;
+	} else if (kindOfShip == "PatrolBoat"){
+		long = 2;
+	}
+}
+
+function calculateCells (long, cell, color){
+	if (cell){
+		var letter = cell.split("")[0];
+		var num1 = cell.split("")[1];
+		var num2 = cell.split("")[2];
+		if (num2){
+			var finalNum = Number(num1+num2)-position;
+		} else {
+			var finalNum = Number(num1)-position;
+		}
+		for (var i=0; i<long; i++){
+			var numberOfCell = finalNum+i;
+			var finalCell = document.querySelector("[userCell='"+letter+numberOfCell+"']");
+			if (finalCell){
+				finalCell.style.background = color;	
+			}
+		}
+	}
+}
+
+function paintTheCellsDuringDrag (ev, color){
+	//	console.log (elementDragging);
+	if (elementDragging){
+		takeLongOfShip(elementDragging);
+	}
+	var finalUserCell = ev.target.getAttribute("userCell");
+	var initialUserCell = elementDragging;
+
+	if (ev.target.hasAttribute("ondragover", "allowDrop (event)")){
+		calculateCells(long, finalUserCell, color);
+	} else {
+		calculateCells(long, finalUserCell, color);
+	}
+}
+
 function drag(ev) {
-	ev.dataTransfer.setData("text", ev.target.id);
-	dataOfTheShip = ev.currentTarget;
-	if (dataOfTheShip.tagName == "DIV"){
+	elementDragging = ev.currentTarget;
+	if (elementDragging.tagName == "DIV"){
 		itIsInsideTheGrid = false;
 	} else {
 		itIsInsideTheGrid = true;
 	}
 	position = ev.target.getAttribute("data-position");
-	var imageWidth = 45;
-	var xPosition = (Number(position) * imageWidth) + (imageWidth/2);
+	var imageWidth = 46;
 	var xPosition = position * imageWidth + (imageWidth/2);
 	var dataName = ev.target.parentNode.getAttribute("data-name");
-	setTheGhost (dataName, imageWidth, xPosition);
-	function setTheGhost (dataName, imageWidth, xPosition){
-		var ghost = document.getElementById(dataName);
-		ev.dataTransfer.setDragImage(ghost, xPosition, imageWidth/2);
-	}
+	var ghost = document.getElementById(dataName);
+	ev.dataTransfer.setDragImage(ghost, xPosition, imageWidth/2);
 }
 
 function drop(ev) {
-	if (dataOfTheShip){
-		ev.preventDefault();
-		var data = ev.dataTransfer.getData("text");
+	paintTheCellsDuringDrag(ev, "");
+	ev.preventDefault();
+	if (elementDragging){
 		var cellInfo = ev.target;
 		calculatingCells (cellInfo);
 	}
 }
 
 function calculatingCells(cellInfo){
-	var kindOfShip = dataOfTheShip.getAttribute("data-name");
+	var kindOfShip = elementDragging.getAttribute("data-name");
 	var cellNumber = cellInfo.getAttribute("userCell");
 	if (kindOfShip == "Destroyer"){
-		printShip (3, cellNumber, "coloredDestroyer", kindOfShip, dataOfTheShip);
+		printShip (3, cellNumber, "coloredDestroyer", kindOfShip, elementDragging);
 	} else if(kindOfShip == "Submarine"){
-		printShip(3, cellNumber, "coloredSubmarine", kindOfShip, dataOfTheShip);
+		printShip(3, cellNumber, "coloredSubmarine", kindOfShip, elementDragging);
 	} else if (kindOfShip == "Carrier"){
-		printShip(5, cellNumber, "coloredCarrier", kindOfShip, dataOfTheShip);
+		printShip(5, cellNumber, "coloredCarrier", kindOfShip, elementDragging);
 	} else if (kindOfShip == "BattleShip"){
-		printShip(4, cellNumber, "coloredBattleship", kindOfShip, dataOfTheShip);
+		printShip(4, cellNumber, "coloredBattleship", kindOfShip, elementDragging);
 	} else if (kindOfShip == "PatrolBoat"){
-		printShip(2, cellNumber, "coloredPatrol", kindOfShip, dataOfTheShip);
+		printShip(2, cellNumber, "coloredPatrol", kindOfShip, elementDragging);
 	}
 }
 
-function printShip(longOfShip, cellNumber, color, kindOfShip, dataOfTheShip){
-	var correctCell = false;
-	var letter = cellNumber.split("")[0];
-	var num1 = cellNumber.split("")[1];
-	var num2 = cellNumber.split("")[2];
-	if (num2){
-		var finalNum = num1+num2;
-	} else {
-		var finalNum = num1;
-	}
-	var number = Number(finalNum)-position;
-	var newPosition = 0;
+function printShip(longOfShip, cellNumber, color, kindOfShip, elementDragging){
+	//	var letter = cellNumber.split("")[0];
+	//	var num1 = cellNumber.split("")[1];
+	//	var num2 = cellNumber.split("")[2];
+	//	if (num2){
+	//		var finalNum = num1+num2;
+	//	} else {
+	//		var finalNum = num1;
+	//	}
+	//	var number = Number(finalNum)-position;
+	//	var newPosition = 0;
 	checkCells();
+
 	function checkCells (){
-		for (var i=0; i<longOfShip; i++){
-			var numberOfCell = number+i;
-			var finalCell = document.querySelector("[userCell='"+letter+numberOfCell+"']");
-			if(numberOfCell>10 || finalCell.hasAttribute("data-occupied")){
-				correctCell = false;
-			} else {
-				correctCell = true;
-			}
-		}
-		if (correctCell == true){
+//		console.log (elementDragging);
+		if (forbidden == false){
 			if (itIsInsideTheGrid){
 				removeFromTheGrid(kindOfShip, color);
 			};
 			printNewShip();
-		} else {
-			alert ("you can't put a ship here");
 		}
 	}
 
 	function printNewShip (){
+		var letter = cellNumber.split("")[0];
+		var num1 = cellNumber.split("")[1];
+		var num2 = cellNumber.split("")[2];
+		if (num2){
+			var finalNum = num1+num2;
+		} else {
+			var finalNum = num1;
+		}
+		var number = Number(finalNum)-position;
+		var newPosition = 0;
 		for (var i=0; i<longOfShip; i++){
 			var numberOfCell = number+i;
 			var finalCell = document.querySelector("[userCell='"+letter+numberOfCell+"']");
@@ -305,6 +423,7 @@ function printShip(longOfShip, cellNumber, color, kindOfShip, dataOfTheShip){
 			image.setAttribute("data-position", newPosition);
 			finalCell.classList.add("shipToDrag", color);
 			finalCell.setAttribute("draggable", true);
+			finalCell.setAttribute("position", "horizontal");
 			finalCell.setAttribute("ondragstart", "drag(event)");
 			finalCell.setAttribute("data-name", kindOfShip);
 			finalCell.setAttribute("data-occupied", "yes");
@@ -312,18 +431,18 @@ function printShip(longOfShip, cellNumber, color, kindOfShip, dataOfTheShip){
 			finalCell.removeAttribute("ondragover", "allowDrop(event)");
 			finalCell.appendChild(image);
 			if (!itIsInsideTheGrid){
-				dataOfTheShip.style.opacity = 0.5;
-				dataOfTheShip.removeAttribute("draggable", true);
-				dataOfTheShip.removeAttribute("ondragstart", "drag(event)");
+				elementDragging.style.opacity = 0.5;
+				elementDragging.removeAttribute("draggable", true);
+				elementDragging.removeAttribute("ondragstart", "drag(event)");
 			}
 			newPosition++;
 		}
 	}
-	cleanData();
+//		cleanData();
 }
 
 function cleanData(){
-	dataOfTheShip = undefined;
+	elementDragging = undefined;
 }
 
 function removeFromTheGrid (kindOfShip, color){
@@ -335,6 +454,7 @@ function removeFromTheGrid (kindOfShip, color){
 		td.setAttribute("draggable", false);
 		td.removeAttribute("ondragstart", "drag(event)");
 		td.removeAttribute("data-name", kindOfShip);
+		td.removeAttribute("position", "horizontal");
 		td.setAttribute("ondrop", "drop(event)");
 		td.removeAttribute("data-occupied", "yes");
 		td.setAttribute("ondragover", "allowDrop(event)");
