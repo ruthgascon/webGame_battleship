@@ -224,6 +224,7 @@ var elementDragging;
 var itIsInsideTheGrid;
 var position;
 var long;
+var style;
 var forbidden = false;
 var orientationChanged = false;
 
@@ -350,7 +351,6 @@ function paintTheCellsDuringDrag (ev, color){
 	}
 	var finalUserCell = ev.target.getAttribute("userCell");
 	var initialUserCell = elementDragging;
-
 	if (ev.target.hasAttribute("ondragover", "allowDrop (event)")){
 		calculateCells(long, finalUserCell, color);
 	} else {
@@ -359,7 +359,6 @@ function paintTheCellsDuringDrag (ev, color){
 }
 
 function drag(ev) {
-	console.log ("lets drag")
 	elementDragging = ev.currentTarget;
 	if (elementDragging.tagName == "DIV"){
 		itIsInsideTheGrid = false;
@@ -375,41 +374,23 @@ function drag(ev) {
 }
 
 function drop(ev) {
-		console.log ("lets drop");
 	paintTheCellsDuringDrag(ev, "");
 	ev.preventDefault();
 	if (elementDragging){
 		var cellInfo = ev.target;
 		var kindOfShip = elementDragging.getAttribute("data-name");
-		calculatingCells (cellInfo, kindOfShip);
+		takeLongOfShip (cellInfo, kindOfShip);
+		printAShip (cellInfo, kindOfShip, elementDragging);
 	}
 }
 
-function calculatingCells(cellInfo, kindOfShip){
-
-	if (kindOfShip == "Destroyer"){
-		checkCells (3, cellInfo, "coloredDestroyer", kindOfShip, elementDragging);
-	} else if(kindOfShip == "Submarine"){
-		checkCells(3, cellInfo, "coloredSubmarine", kindOfShip, elementDragging);
-	} else if (kindOfShip == "Carrier"){
-		checkCells(5, cellInfo, "coloredCarrier", kindOfShip, elementDragging);
-	} else if (kindOfShip == "BattleShip"){
-		checkCells(4, cellInfo, "coloredBattleship", kindOfShip, elementDragging);
-	} else if (kindOfShip == "PatrolBoat"){
-		checkCells(2, cellInfo, "coloredPatrol", kindOfShip, elementDragging);
-	}
-}
-
-function checkCells(longOfShip, cellInfo, color, kindOfShip, elementDragging){
+function printAShip(cellInfo, kindOfShip, elementDragging, changing){
+	var color = "colored"+kindOfShip;
 	var cellNumber = cellInfo.getAttribute("userCell");
 	if (forbidden == false){
-		if (itIsInsideTheGrid){
-			removeFromTheGrid(kindOfShip, color);
-		};
-		printNewShip();
-	}
-
-	function printNewShip(){
+		//		if (itIsInsideTheGrid){
+		//			removeFromTheGrid(kindOfShip, color);
+		//		}
 		var occupied = false;
 		var letter = cellNumber.split("")[0];
 		var num1 = cellNumber.split("")[1];
@@ -420,18 +401,17 @@ function checkCells(longOfShip, cellInfo, color, kindOfShip, elementDragging){
 			var finalNum = num1;
 		}
 		var number = Number(finalNum)-position;
-		if (cellInfo.getAttribute("position") == "vertical"){
-			checkCellsOnChangingOrientationToVertical(letter);
-			//			console.log (occupied);
+		if (cellInfo.getAttribute("position") == "horizontal" || changing == "changingToVertical"){
+			checkOverlappingVertical(letter);
 			if (occupied != true){
 				printVerticalShip(letter);
 			} else {
-				alert ("you can't turn the ship");
+				alert ("wrong location");
 			}
-			function checkCellsOnChangingOrientationToVertical(letter){
+			function checkOverlappingVertical(letter){
 				var newPosition = 0;
 				var name = cellInfo.getAttribute("data-name");
-				for (var i=0; i<longOfShip; i++){
+				for (var i=0; i<long; i++){
 					var numberOfCell = number+i;
 					var finalCell = document.querySelector("[userCell='"+letter+number+"']");
 					var image= document.createElement("img");
@@ -457,7 +437,7 @@ function checkCells(longOfShip, cellInfo, color, kindOfShip, elementDragging){
 				var newPosition = 0;
 				var name = cellInfo.getAttribute("data-name");
 				removeFromTheGrid (name, color);
-				for (var i=0; i<longOfShip; i++){
+				for (var i=0; i<long; i++){
 					var numberOfCell = number+i;
 					var finalCell = document.querySelector("[userCell='"+letter+number+"']");
 					var image= document.createElement("img");
@@ -480,14 +460,39 @@ function checkCells(longOfShip, cellInfo, color, kindOfShip, elementDragging){
 				}
 			}
 		} else {
-			printHorizonalShip(number)
+			checkOverlappingHorizontal (number);
+			if (occupied != true){
+				printHorizonalShip(number);
+				
+			} else {
+				alert ("wrong location");
+			}
+		}
+
+		function checkOverlappingHorizontal(number){
+			occupied = false;
+			var newPosition = 0;
+			var name = cellInfo.getAttribute("data-name");
+			for (var i=0; i<long; i++){
+				var numberOfCell = number+i;
+				var finalCell = document.querySelector("[userCell='"+letter+numberOfCell+"']");
+				if (finalCell){
+					if (newPosition!=0 && finalCell.getAttribute("data-occupied") == "yes"){
+						occupied = true;
+					} else if (numberOfCell >= 11 || numberOfCell <=0){						
+						occupied = true;
+					}
+				} else {
+					occupied = true;	
+				}
+				newPosition++;
+			}
 		}
 
 		function printHorizonalShip(number){
 			var newPosition = 0;
-			var name = cellInfo.getAttribute("data-name");
-			removeFromTheGrid (name, color);
-			for (var i=0; i<longOfShip; i++){
+			removeFromTheGrid (kindOfShip, color);
+			for (var i=0; i<long; i++){
 				var numberOfCell = number+i;
 				var finalCell = document.querySelector("[userCell='"+letter+numberOfCell+"']");
 				var image= document.createElement("img");
@@ -502,7 +507,6 @@ function checkCells(longOfShip, cellInfo, color, kindOfShip, elementDragging){
 				finalCell.removeAttribute("ondrop", "drop(event)");
 				finalCell.removeAttribute("ondragover", "allowDrop(event)");
 				finalCell.appendChild(image);
-				//				finalCell.addEventListener('click', changeOrientationToVertical);
 				finalCell.addEventListener('click', changeOrientation);
 				if (elementDragging && !itIsInsideTheGrid){
 					elementDragging.style.opacity = 0.5;
@@ -533,7 +537,6 @@ function removeFromTheGrid (kindOfShip, color){
 		td.setAttribute("ondrop", "drop(event)");
 		td.removeAttribute("data-occupied", "yes");
 		td.removeEventListener('click', changeOrientation);
-		//		td.removeEventListener('click', changeOrientationToVertical);
 		td.setAttribute("ondragover", "allowDrop(event)");
 		td.removeChild(td.children["0"]);
 	}
@@ -541,13 +544,14 @@ function removeFromTheGrid (kindOfShip, color){
 
 function changeOrientation(e){
 	var element = e.path[1];
-	//	console.log ("im entering changeOrientation() whaaaat???")
-	if (element.getAttribute("position")=="horizontal"){
-		element.setAttribute("position", "vertical");
-	} else if (element.getAttribute("position")=="vertical"){
-		element.setAttribute("position", "horizontal");
-	}
+	takeLongOfShip(element);
+	var orientation = element.getAttribute("position");
 	var kindOfShip = element.getAttribute("data-name");
-	calculatingCells(element, kindOfShip);
-	return;
+	if (orientation=="horizontal"){
+		var changing = "changingToVertical";
+		printAShip(element, kindOfShip, null, changing);
+	} else if (orientation=="vertical"){
+		var changing = "changingToHorizontal";
+		printAShip(element, kindOfShip, null, changing);
+	}
 }
