@@ -193,14 +193,16 @@ $( document ).ready(function() {
 			} 
 		}
 		listOfShips.push(objectDestroyer, objectSubmarine, objectCarrier, objectBattleShip, objectPatrolBoat);
-		//		console.log (listOfShips);
+		var correctData = true;
 		for (var i =0; i<listOfShips.length; i++){
 			if (listOfShips[i].locations.length == 0){
-				alert ("put all the ships!");
-				return;
-			} else {
-				sendShips(listOfShips);
-			}
+				correctData = false;
+			} 
+		}
+		if (correctData == true){
+			sendShips(listOfShips);
+		} else{
+			alert ("put all the ships!");
 		}
 	});
 
@@ -223,15 +225,7 @@ var itIsInsideTheGrid;
 var position;
 var long;
 var forbidden = false;
-//
-//var allShips = document.getElementsByClassName("shipToDrag");
-//
-//for (var i = 0; i<allShips.length; i++){
-//	console.log (allShips[i]);
-//	allShips[i].addEventListener('dblclick', function(){ 
-//		console.log ("hola");
-//	})
-//}
+var orientationChanged = false;
 
 document.addEventListener("dragenter", function(ev) {
 	takeLongOfShip(elementDragging);
@@ -351,7 +345,6 @@ function calculateCells (long, cell, color){
 }
 
 function paintTheCellsDuringDrag (ev, color){
-	//	console.log (elementDragging);
 	if (elementDragging){
 		takeLongOfShip(elementDragging);
 	}
@@ -366,6 +359,7 @@ function paintTheCellsDuringDrag (ev, color){
 }
 
 function drag(ev) {
+	console.log ("lets drag")
 	elementDragging = ev.currentTarget;
 	if (elementDragging.tagName == "DIV"){
 		itIsInsideTheGrid = false;
@@ -381,6 +375,7 @@ function drag(ev) {
 }
 
 function drop(ev) {
+		console.log ("lets drop");
 	paintTheCellsDuringDrag(ev, "");
 	ev.preventDefault();
 	if (elementDragging){
@@ -414,7 +409,8 @@ function checkCells(longOfShip, cellInfo, color, kindOfShip, elementDragging){
 		printNewShip();
 	}
 
-	function printNewShip (){
+	function printNewShip(){
+		var occupied = false;
 		var letter = cellNumber.split("")[0];
 		var num1 = cellNumber.split("")[1];
 		var num2 = cellNumber.split("")[2];
@@ -425,48 +421,72 @@ function checkCells(longOfShip, cellInfo, color, kindOfShip, elementDragging){
 		}
 		var number = Number(finalNum)-position;
 		if (cellInfo.getAttribute("position") == "vertical"){
-			console.log ("vertical");
-			changeTheLetter();
+			checkCellsOnChangingOrientationToVertical(letter);
+			//			console.log (occupied);
+			if (occupied != true){
+				printVerticalShip(letter);
+			} else {
+				alert ("you can't turn the ship");
+			}
+			function checkCellsOnChangingOrientationToVertical(letter){
+				var newPosition = 0;
+				var name = cellInfo.getAttribute("data-name");
+				for (var i=0; i<longOfShip; i++){
+					var numberOfCell = number+i;
+					var finalCell = document.querySelector("[userCell='"+letter+number+"']");
+					var image= document.createElement("img");
+					if (!finalCell){
+						occupied = true;
+					} else {
+						if (finalCell.getAttribute("data-occupied")=="yes" && newPosition != 0){
+							occupied = true;
+						} else if (letter == "K"){
+							occupied = true;
+						}
+					}
+
+					function nextChar(letter) {
+						return String.fromCharCode(letter.charCodeAt(0) + 1);
+					}
+					letter = nextChar(letter);
+					newPosition++;
+				}
+			}
+
+			function printVerticalShip(letter){
+				var newPosition = 0;
+				var name = cellInfo.getAttribute("data-name");
+				removeFromTheGrid (name, color);
+				for (var i=0; i<longOfShip; i++){
+					var numberOfCell = number+i;
+					var finalCell = document.querySelector("[userCell='"+letter+number+"']");
+					var image= document.createElement("img");
+					image.setAttribute("src", "images/ship.png");
+					image.setAttribute("data-position", newPosition);
+					finalCell.classList.add("shipToDrag", color);
+					finalCell.setAttribute("draggable", true);
+					finalCell.setAttribute("position", "vertical");
+					finalCell.setAttribute("ondragstart", "drag(event)");
+					finalCell.setAttribute("data-name", kindOfShip);
+					finalCell.setAttribute("data-occupied", "yes");
+					finalCell.removeAttribute("ondrop", "drop(event)");
+					finalCell.removeAttribute("ondragover", "allowDrop(event)");
+					finalCell.appendChild(image);
+					finalCell.addEventListener('click', changeOrientation);
+					function nextChar(letter) {
+						return String.fromCharCode(letter.charCodeAt(0) + 1);
+					}
+					letter = nextChar(letter);
+				}
+			}
 		} else {
-			console.log ("horizontal");
-			changeTheNumber();
+			printHorizonalShip(number)
 		}
 
-		function changeTheLetter(){
+		function printHorizonalShip(number){
 			var newPosition = 0;
 			var name = cellInfo.getAttribute("data-name");
-			removeFromTheGrid (name, color)
-			for (var i=0; i<longOfShip; i++){
-				var numberOfCell = number+i;
-				var finalCell = document.querySelector("[userCell='"+letter+number+"']");
-				var image= document.createElement("img");
-				image.setAttribute("src", "images/ship.png");
-				image.setAttribute("data-position", newPosition);
-				finalCell.classList.add("shipToDrag", color);
-				finalCell.setAttribute("draggable", true);
-				finalCell.setAttribute("position", "vertical");
-				finalCell.setAttribute("ondragstart", "drag(event)");
-				finalCell.setAttribute("data-name", kindOfShip);
-				finalCell.setAttribute("data-occupied", "yes");
-				finalCell.removeAttribute("ondrop", "drop(event)");
-				finalCell.removeAttribute("ondragover", "allowDrop(event)");
-				finalCell.appendChild(image);
-				finalCell.addEventListener('dblclick', function(){ 
-					changeOrientation(this);
-				})
-
-				function nextChar(letter) {
-					return String.fromCharCode(letter.charCodeAt(0) + 1);
-				}
-
-				letter = nextChar(letter);
-				newPosition++;
-
-			}
-		}
-
-		function changeTheNumber(){
-			var newPosition = 0;
+			removeFromTheGrid (name, color);
 			for (var i=0; i<longOfShip; i++){
 				var numberOfCell = number+i;
 				var finalCell = document.querySelector("[userCell='"+letter+numberOfCell+"']");
@@ -482,18 +502,16 @@ function checkCells(longOfShip, cellInfo, color, kindOfShip, elementDragging){
 				finalCell.removeAttribute("ondrop", "drop(event)");
 				finalCell.removeAttribute("ondragover", "allowDrop(event)");
 				finalCell.appendChild(image);
-				finalCell.addEventListener('dblclick', function(){ 
-					changeOrientation(this);
-				})
+				//				finalCell.addEventListener('click', changeOrientationToVertical);
+				finalCell.addEventListener('click', changeOrientation);
 				if (elementDragging && !itIsInsideTheGrid){
 					elementDragging.style.opacity = 0.5;
 					elementDragging.removeAttribute("draggable", true);
 					elementDragging.removeAttribute("ondragstart", "drag(event)");
 				}
-				newPosition++;
 			}
+			newPosition++;
 		}
-
 	}
 	cleanData();
 }
@@ -514,17 +532,22 @@ function removeFromTheGrid (kindOfShip, color){
 		td.removeAttribute("position", "horizontal");
 		td.setAttribute("ondrop", "drop(event)");
 		td.removeAttribute("data-occupied", "yes");
+		td.removeEventListener('click', changeOrientation);
+		//		td.removeEventListener('click', changeOrientationToVertical);
 		td.setAttribute("ondragover", "allowDrop(event)");
 		td.removeChild(td.children["0"]);
 	}
 }
 
-function changeOrientation(element){
-	if (element.getAttribute("position")=="vertical"){
-		element.setAttribute("position", "horizontal");
-	} else if (element.getAttribute("position")=="horizontal"){
+function changeOrientation(e){
+	var element = e.path[1];
+	//	console.log ("im entering changeOrientation() whaaaat???")
+	if (element.getAttribute("position")=="horizontal"){
 		element.setAttribute("position", "vertical");
+	} else if (element.getAttribute("position")=="vertical"){
+		element.setAttribute("position", "horizontal");
 	}
 	var kindOfShip = element.getAttribute("data-name");
 	calculatingCells(element, kindOfShip);
+	return;
 }

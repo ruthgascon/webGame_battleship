@@ -16,6 +16,12 @@ $( document ).ready(function() {
 		login (event);
 	});
 
+	$(document).keypress(function(e) {
+		if(e.which == 13) {
+			login (event);
+		}
+	});
+
 	$('#signUpform').click(function (event) {
 		postSignUpAjax(event);
 	});
@@ -138,7 +144,7 @@ $( document ).ready(function() {
 			}
 		})
 	}
-	
+
 	function playButtonOn(){
 		$('#playButton').removeClass("hidden");
 	}
@@ -165,7 +171,7 @@ $( document ).ready(function() {
 		var passwordInput = $('#passwordLogin').val().replace(/\s+/g, '');
 		var data = 'username=' +usernameInput + '&password=' + passwordInput;
 		postLoginAjax (data, usernameInput, passwordInput);
-//		printTableGame();
+		//		printTableGame();
 	};
 
 	function postLoginAjax(data, usernameInput, passwordInput){
