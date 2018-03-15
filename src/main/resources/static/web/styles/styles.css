@@ -402,15 +402,11 @@ input:-webkit-autofill {
 }
 
 .shotPendant{
-	background-color: red !important;
+	background-image: url(../images/bullseye.svg);
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
 }
-
-/*
-.salvoText{
-	display: block;
-	justify-content: center;
-}
-*/
 
 .salvoText p {
 	font-size: 12px;
@@ -418,4 +414,8 @@ input:-webkit-autofill {
 
 .margin-bottom-100{
 	margin-bottom: 100px;
+}
+
+.margin-top-50{
+	margin-top: 50px;
 }

@@ -226,9 +226,36 @@ public class SalvoController {
                 .map(GamePlayer -> makeSalvoGamePlayerDTO(GamePlayer))
                 .collect(Collectors.toList());
         dto.put("Salvoes", makeSalvoesDTO2);
+        dto.put ("Hits", checkHits(gamePlayer, game.getGamePlayers()));
         return dto;
     }
 
+    private List <Object> checkHits (GamePlayer gamePlayer, Set<GamePlayer> gamePlayers){
+        List <Object> hits = new ArrayList<>();
+        for (GamePlayer GP : gamePlayers){
+            if (GP.getId() != gamePlayer.getId()){
+                Set<Ship> opponentShips = GP.getShips();
+                for (Ship opponentShip : opponentShips){
+                    List<String> opponentShipLocations = opponentShip.getLocations();
+                    Set<Salvo> currentGPsalvoes = gamePlayer.getSalvos();
+                    for (Salvo currentGPsalvo : currentGPsalvoes){
+                        List <String> currentGPsalvoLocations = currentGPsalvo.getLocations();
+                        for (String location : currentGPsalvoLocations){
+                            if (opponentShipLocations.stream().anyMatch(l -> l.equals(location))){
+                                Map<String, Object> dto = new LinkedHashMap<>();
+                                dto.put ("typeOfShip", opponentShip.getType());
+                                dto.put ("turn", currentGPsalvo.getTurnNumber());
+                                dto.put ("cell", opponentShipLocations.stream().filter(l -> l.equals(location)).collect(Collectors.toList()));
+                                hits.add(dto);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return hits;
+    }
 
     private Map<String, Object> makeShipDTO(Ship ship) {
         Map<String, Object> dto = new LinkedHashMap<>();

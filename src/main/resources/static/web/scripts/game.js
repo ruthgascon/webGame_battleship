@@ -90,14 +90,10 @@ $( document ).ready(function() {
 							var location = oneShipLocations[x];
 							$("[usercell="+location+"]").addClass(thisClass);
 							$("[usercell="+location+"]").addClass("locatedShip");
-							console.log ($('#sendSalvosButtonSpace'));
-//							$('#sendSalvosButtonSpace').removeClass("hidden");
+							$('#sendSalvosButtonSpace').removeClass("hidden");
 						}
 					}
-					
-
 				}
-
 			}
 
 			function getGamePlayersInfo () {
@@ -119,17 +115,18 @@ $( document ).ready(function() {
 
 			function getSalvoes(){
 				var Salvoes = data.Salvoes;
+				var Hits = data.Hits;
 				for (var i in Salvoes){
 					if (Salvoes[i].GamePlayer == gamePlayerID){
-						printSalvos (Salvoes[i].Salvoes, "salvoesCell");
+						printSalvos (Salvoes[i].Salvoes, "salvoesCell", Hits);
 					} else {
 						printSalvos (Salvoes[i].Salvoes, "userCell");
 					}
 				}
 			}
 
-			function printSalvos (whomSalvos, where) {
-				console.log (where);
+			function printSalvos (whomSalvos, where, hits) {
+				//				console.log (where);
 				var salvos = whomSalvos;
 				//FUNCTION TO SORT THE SALVOS BY TURN
 				function compare(a,b) {
@@ -149,7 +146,6 @@ $( document ).ready(function() {
 						var newFigure = document.createElement("div");
 						if (where=="userCell"){
 							if ($("["+where+"="+salvoLoc+"]").hasClass("locatedShip")){
-
 								$("["+where+"="+salvoLoc+"]").removeClass("salvoes");
 								$("["+where+"="+salvoLoc+"]").addClass("hittedShip");
 								var turnText = document.createElement ('p');
@@ -160,6 +156,17 @@ $( document ).ready(function() {
 						$("["+where+"="+salvoLoc+"]").append(newFigure);
 						$("["+where+"="+salvoLoc+"]").addClass("salvoes");
 					}
+				}
+				for (var i in hits){
+					var turn = hits[i].turn;
+					var kindOfShip = hits[i].typeOfShip;
+					var cell = hits[i].cell[0];
+					$("["+where+"="+cell+"]").removeClass("salvoes");
+					$("["+where+"="+cell+"]").addClass("hittedShip");
+					var turnText = document.createElement ('p');
+					turnText.append(turn);
+					var child = $("["+where+"="+cell+"]").children("div");
+					child.append(turnText);
 				}
 			}
 
