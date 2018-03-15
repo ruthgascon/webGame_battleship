@@ -22,55 +22,71 @@
 				<img class="aproachShip" src="images/ship.png">
 			</div>
 		</div>
-		<div id ="content" class="hidden">
+		<div id ="content" class="hidden container">
 			<div class="centered">
-				<a href="games.html" >
+				<a href="games.html" class="generalButton">
 					<button class="backButton"><i class="fas fa-chevron-left"></i> BACK</button>
 				</a>
 			</div>
 			<p class="centered" id="User1">You: </p>
 			<p class="centered" id="User2"> </p>
-			<table class="gameTable" id="userTable">
-			</table>
-			<p class="addShips hidden centered" id="addShips">Add Ships +</p>
+			<div class="row">
+				<div class="col-6">
+<h2 id="title">YOUR SHIPS</h2>
+					<table class="gameTable" id="userTable">
+					</table>
+					<div class="hidden centered generalButton margin-bottom-100" id="addShips">
+						<button>Add Ships</button>
+					</div>
 
-			<div class="hidden centered" id="sendShips">
-				<div  id="Destroyer" class="shipToDrag coloredDestroyer" draggable="true" ondragstart="drag(event)" data-name="Destroyer" position="horizontal">
-					<img src="images/ship.png" data-position=0><!--
+					<div class="hidden centered" id="sendShips">
+						<div  id="Destroyer" class="shipToDrag coloredDestroyer" draggable="true" ondragstart="drag(event)" data-name="Destroyer" orientation="horizontal">
+							<img src="images/ship.png" data-position=0><!--
 --><img src="images/ship.png" data-position=1><!--
 --><img src="images/ship.png" data-position=2>
-				</div>
-				<div id="Submarine" class="shipToDrag coloredSubmarine" draggable="true" ondragstart="drag(event)" data-name="Submarine" position="horizontal">
-					<img src="images/ship.png" data-position=0><!--
+						</div>
+						<div id="Submarine" class="shipToDrag coloredSubmarine" draggable="true" ondragstart="drag(event)" data-name="Submarine" orientation="horizontal">
+							<img src="images/ship.png" data-position=0><!--
 --><img src="images/ship.png" data-position=1><!--
 --><img src="images/ship.png" data-position=2>
-				</div>
-				<div id="Carrier" class="shipToDrag coloredCarrier" draggable="true" ondragstart="drag(event)" data-name="Carrier" position="horizontal">
-					<img src="images/ship.png" data-position=0><!--
+						</div>
+						<div id="Carrier" class="shipToDrag coloredCarrier" draggable="true" ondragstart="drag(event)" data-name="Carrier" orientation="horizontal">
+							<img src="images/ship.png" data-position=0><!--
 --><img src="images/ship.png" data-position=1><!--
 --><img src="images/ship.png" data-position=2><!--
 --><img src="images/ship.png" data-position=3><!--
 --><img src="images/ship.png" data-position=4>
-				</div>
-				<div id="BattleShip" class="shipToDrag coloredBattleShip" draggable="true" ondragstart="drag(event)" data-name="BattleShip" position="horizontal">
-					<img src="images/ship.png" data-position=0><!--
+						</div>
+						<div id="Battleship" class="shipToDrag coloredBattleship" draggable="true" ondragstart="drag(event)" data-name="Battleship" orientation="horizontal">
+							<img src="images/ship.png" data-position=0><!--
 --><img src="images/ship.png" data-position=1><!--
 --><img src="images/ship.png" data-position=2><!--
 --><img src="images/ship.png" data-position=3>
-				</div>
-				<div id="PatrolBoat" class="shipToDrag coloredPatrolBoat" draggable="true" ondragstart="drag(event)" width="336" height="69" data-name="PatrolBoat">
-					<img src="images/ship.png" data-position = 0><!--
+						</div>
+						<div id="Patrol" class="shipToDrag coloredPatrol" draggable="true" ondragstart="drag(event)" width="336" height="69" data-name="Patrol" orientation="horizontal">
+							<img src="images/ship.png" data-position = 0><!--
 --><img src="images/ship.png" data-position=1>
+						</div>
+
+					</div>
+					<div class="hidden centered generalButton" id="sendShipsButtonSpace">
+						<button id="sendShipsButton">Send Ships</button>
+					</div>
 				</div>
-
+				<div class="col-6">
+					<h2 id="title">YOUR SALVOES</h2>
+					<table class="gameTable salvoesTable" id="salvoTable">
+					</table>
+					<div class="centered generalButton salvoButton row hidden" id="sendSalvosButtonSpace">
+						<div class="salvoText col-12">
+							<p class="text-center">Click to the cell where you want to shoot. You can only shoot 5 times in every turn</p>
+						</div>
+						<div class="col-12 d-flex justify-content-center">
+						<button id="sendSalvosButton">Send salvo</button>
+						</div>
+					</div>
+				</div>
 			</div>
-			<div class="hidden centered" id="sendShipsButtonSpace">
-				<button id="sendShipsButton">Send Ships</button>
-			</div>
-
-			<h2 id="title">YOUR SALVOES</h2>
-			<table class="gameTable" id="salvoTable">
-			</table>
 		</div>
 		<script src="scripts/game.js"></script>
 		<script>

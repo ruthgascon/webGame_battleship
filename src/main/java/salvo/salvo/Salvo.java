@@ -42,6 +42,18 @@ public class Salvo {
         return locations;
     }
 
+    public void setLocations(List<String> locations) {
+        this.locations = locations;
+    }
+
+    public void setGamePlayer(GamePlayer gamePlayer) {
+        this.gamePlayer = gamePlayer;
+    }
+
+    public void setTurnNumber(Integer turnNumber) {
+        this.turnNumber = turnNumber;
+    }
+
     public GamePlayer getGamePlayer() {
         return gamePlayer;
     }

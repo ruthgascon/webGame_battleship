@@ -18,6 +18,7 @@ $( document ).ready(function() {
 			url: "http://localhost:8080/api/game_view/" + gamePlayerID,
 			context: document.body
 		}).done(function(data) {
+			console.log (data);
 			createTable (10, document.getElementById("userTable"), "userCell");
 			createTable (10, document.getElementById("salvoTable"), "salvoesCell");
 			getShips();
@@ -26,7 +27,7 @@ $( document ).ready(function() {
 			hideloading();
 			$('#backButton').on("click", goBack);
 
-			function goBack () {
+			function goBack() {
 				window.location.replace("games.html");
 			}
 
@@ -76,22 +77,27 @@ $( document ).ready(function() {
 				}
 			}
 
-			function getShips (){
+			function getShips(){
 				var shipsInfo = data.Ships;
 				if (shipsInfo.length==0){
 					$("#addShips").removeClass("hidden");
-				}
-				for (var y=0; y<shipsInfo.length; y++){
-					var oneShipInfo = shipsInfo[y];
-					var oneShipLocations = oneShipInfo.Locations;
-					for (var x = 0; x<oneShipLocations.length; x++){
-
-						var thisClass = "colored"+(oneShipInfo.Type.split(" ", 1));
-						var location = oneShipLocations[x];
-						$("[usercell="+location+"]").addClass(thisClass);
-						$("[usercell="+location+"]").addClass("locatedShip");
+				} else {
+					for (var y=0; y<shipsInfo.length; y++){
+						var oneShipInfo = shipsInfo[y];
+						var oneShipLocations = oneShipInfo.Locations;
+						for (var x = 0; x<oneShipLocations.length; x++){
+							var thisClass = "colored"+(oneShipInfo.Type.split(" ", 1));
+							var location = oneShipLocations[x];
+							$("[usercell="+location+"]").addClass(thisClass);
+							$("[usercell="+location+"]").addClass("locatedShip");
+							console.log ($('#sendSalvosButtonSpace'));
+//							$('#sendSalvosButtonSpace').removeClass("hidden");
+						}
 					}
+					
+
 				}
+
 			}
 
 			function getGamePlayersInfo () {
@@ -114,7 +120,7 @@ $( document ).ready(function() {
 			function getSalvoes(){
 				var Salvoes = data.Salvoes;
 				for (var i in Salvoes){
-					if (Salvoes[i].GamePlayer != gamePlayerID){
+					if (Salvoes[i].GamePlayer == gamePlayerID){
 						printSalvos (Salvoes[i].Salvoes, "salvoesCell");
 					} else {
 						printSalvos (Salvoes[i].Salvoes, "userCell");
@@ -123,6 +129,7 @@ $( document ).ready(function() {
 			}
 
 			function printSalvos (whomSalvos, where) {
+				console.log (where);
 				var salvos = whomSalvos;
 				//FUNCTION TO SORT THE SALVOS BY TURN
 				function compare(a,b) {
@@ -174,8 +181,8 @@ $( document ).ready(function() {
 		var objectDestroyer = {type: "Destroyer", locations: []};
 		var objectSubmarine = {type: "Submarine", locations: []};
 		var objectCarrier = {type: "Carrier", locations: []};
-		var objectBattleShip = {type: "Battleship", locations: []};
-		var objectPatrolBoat = {type: "Patrol Boat", locations: []};
+		var objectBattleship = {type: "Battleship", locations: []};
+		var objectPatrol = {type: "Patrol", locations: []};
 		var x = $("[data-occupied=yes]");
 		for (var i = 0; i<x.length; i++){
 			var usercell = x[i].getAttribute("usercell");
@@ -186,13 +193,13 @@ $( document ).ready(function() {
 				objectSubmarine.locations.push(usercell);
 			} else if(attribute == "Carrier"){
 				objectCarrier.locations.push(usercell);
-			} else if(attribute == "BattleShip"){
-				objectBattleShip.locations.push(usercell);
-			} else if(attribute == "PatrolBoat"){
-				objectPatrolBoat.locations.push(usercell);
+			} else if(attribute == "Battleship"){
+				objectBattleship.locations.push(usercell);
+			} else if(attribute == "Patrol"){
+				objectPatrol.locations.push(usercell);
 			} 
 		}
-		listOfShips.push(objectDestroyer, objectSubmarine, objectCarrier, objectBattleShip, objectPatrolBoat);
+		listOfShips.push(objectDestroyer, objectSubmarine, objectCarrier, objectBattleship, objectPatrol);
 		var correctData = true;
 		for (var i =0; i<listOfShips.length; i++){
 			if (listOfShips[i].locations.length == 0){
@@ -210,11 +217,70 @@ $( document ).ready(function() {
 		$.ajax({
 			data: JSON.stringify(ships),
 			contentType: "application/json",
-			timeout: 1000,
+			//			timeout: 1000,
 			type: 'POST',
 			url: '/api/games/players/'+gamePlayerID+'/ships'
 		}).done(function(data, textStatus, jqXHR){
 			location.reload();
+		}).fail(function(data, textStatus, jqXHR){
+			alert("incorrect data");
+			location.reload();
+		})
+	}
+
+	///SEND SALVOS
+
+	var salvoesCells = document.querySelector(".salvoesTable");
+
+	salvoesCells.addEventListener("click", function(e){
+		var cell = e.target;
+		if (cell.classList.contains("shotPendant")){
+			cell.classList.remove("shotPendant");
+			cell.removeAttribute("data-shooted", "yes");
+		} else {
+			var shotCells = $(".shotPendant");
+			if (shotCells.length > 4){
+				alert ("only 5!!!!");
+			} else {
+				if(cell.tagName=="DIV"){
+					cell = cell.parentElement;
+				}
+				if (cell.classList.contains("salvoes")){
+					alert ("you have already shot here");
+				} else {
+					cell.classList.add("shotPendant");
+					cell.setAttribute("data-shooted", "yes");
+				}
+
+			}
+		}
+	});
+
+	$('#sendSalvosButton').click(function(){
+		var listOfShoots = {locations: []};
+		var shoots = $("[data-shooted=yes]");
+		for (var i = 0; i<shoots.length; i++){
+			var cellNumber = shoots[i].getAttribute("salvoescell");
+			listOfShoots.locations.push(cellNumber);
+		}
+		if (listOfShoots.locations.length > 5){
+			alert ("you can only send 5 shoots at once")
+		} else {
+			console.log(listOfShoots);
+			sendSalvos(listOfShoots);
+		}
+	})
+
+	function sendSalvos (listOfShoots){
+		$.ajax({
+			data: JSON.stringify(listOfShoots),
+			contentType: "application/json",
+			type: 'POST',
+			url: '/api/games/players/'+gamePlayerID+'/salvos'
+		}).done(function(data, textStatus, jqXHR){
+			location.reload();
+		}).fail(function(data, textStatus, jqXHR){
+			alert("incorrect data");
 		})
 	}
 });
@@ -243,17 +309,16 @@ document.addEventListener("dragenter", function(ev) {
 			}
 			var number = Number(finalNum)-position;
 			var newPosition = 0;
-			removeDataOccupied();
-			function removeDataOccupied (){
-				for (var i=0; i<long; i++){
-					var numberOfCell = number+i;
-					var finalCell = document.querySelector("[userCell='"+letter+numberOfCell+"']");
-					finalCell.removeAttribute("data-occupied");
-				}
-			}
+			//			removeDataOccupied();
+			//			function removeDataOccupied (){
+			//				for (var i=0; i<long; i++){
+			//					var numberOfCell = number+i;
+			//					var finalCell = document.querySelector("[userCell='"+letter+numberOfCell+"']");
+			//					finalCell.removeAttribute("data-occupied");
+			//				}
+			//			}
 		}
 	}
-
 }, false);
 
 document.addEventListener("dragover", function(ev) {
@@ -272,8 +337,13 @@ document.addEventListener("dragover", function(ev) {
 			}
 			var number = Number(finalNum)-position;
 			var newPosition = 0;
-			checkCells();
-			function checkCells (){
+			//			if (elementDragging.getAttribute("position") == "vertical"){
+			//				checkCellsVertical();
+			//			} else {
+			checkCellsHorizontal();
+			//			}
+
+			function checkCellsHorizontal (){
 				for (var i=0; i<long; i++){
 					var numberOfCell = number+i;
 					var finalCell = document.querySelector("[userCell='"+letter+numberOfCell+"']");
@@ -291,9 +361,35 @@ document.addEventListener("dragover", function(ev) {
 					paintTheCellsDuringDrag(ev, "");
 					return
 				} else {
-					paintTheCellsDuringDrag(ev, "green");
+					paintTheCellsDuringDrag(ev, "#001a33");
 				}
 			}
+
+			//			function checkCellsVertical (){
+			//				for (var i=0; i<long; i++){
+			//					var numberOfCell = number+i;
+			//					var finalCell = document.querySelector("[userCell='"+letter+numberOfCell+"']");
+			//					if(numberOfCell>10 || numberOfCell <1){
+			//						forbidden = true;
+			//					} else if (finalCell.getAttribute("data-occupied")=="yes"){
+			//						forbidden = true;
+			//					} else if (elementDragging.getAttribute("style") == "opacity: 0.5;"){
+			//						forbidden = true;
+			//					}else {
+			//						forbidden = false;
+			//					}
+			//					function nextChar(letter) {
+			//						return String.fromCharCode(letter.charCodeAt(0) + 1);
+			//					}
+			//					letter = nextChar(letter);
+			//				}
+			//				if (forbidden){
+			//					paintTheCellsDuringDrag(ev, "");
+			//					//					return
+			//				} else {
+			//					paintTheCellsDuringDrag(ev, "#001a33");
+			//				}
+			//			}
 		}
 	}
 
@@ -301,7 +397,6 @@ document.addEventListener("dragover", function(ev) {
 
 document.addEventListener("dragleave", function(ev) {
 	paintTheCellsDuringDrag(ev, "");
-	//	cleanData();
 }, false);
 
 function allowDrop(ev) {
@@ -317,9 +412,9 @@ function takeLongOfShip (elementDragging){
 			long = 3;
 		} else if (kindOfShip == "Carrier"){
 			long = 5;
-		} else if (kindOfShip == "BattleShip"){
+		} else if (kindOfShip == "Battleship"){
 			long = 4;
-		} else if (kindOfShip == "PatrolBoat"){
+		} else if (kindOfShip == "Patrol"){
 			long = 2;
 		}
 	}
@@ -335,13 +430,28 @@ function calculateCells (long, cell, color){
 		} else {
 			var finalNum = Number(num1)-position;
 		}
+		//		if (elementDragging.getAttribute("position") =="vertical"){
+		//			for (var i=0; i<long; i++){
+		//				var finalCell = document.querySelector("[userCell='"+letter+finalNum+"']");
+		//				if (finalCell){
+		//					finalCell.style.background = color;	
+		//				}
+		//				function nextChar(letter) {
+		//					return String.fromCharCode(letter.charCodeAt(0) + 1);
+		//				}
+		//				letter = nextChar(letter);
+		//			}
+		//		} else {
 		for (var i=0; i<long; i++){
 			var numberOfCell = finalNum+i;
 			var finalCell = document.querySelector("[userCell='"+letter+numberOfCell+"']");
 			if (finalCell){
 				finalCell.style.background = color;	
 			}
+
 		}
+		//		}
+
 	}
 }
 
@@ -362,14 +472,18 @@ function drag(ev) {
 	elementDragging = ev.currentTarget;
 	if (elementDragging.tagName == "DIV"){
 		itIsInsideTheGrid = false;
+		position = Number(ev.target.getAttribute("data-position"));
 	} else {
 		itIsInsideTheGrid = true;
+		position = Number(elementDragging.getAttribute("data-position"));
 	}
-	position = ev.target.getAttribute("data-position");
 	var imageWidth = 46;
 	var xPosition = position * imageWidth + (imageWidth/2);
 	var dataName = ev.target.parentNode.getAttribute("data-name");
 	var ghost = document.getElementById(dataName);
+	//	if (elementDragging.getAttribute("position")=="vertical"){
+	//		ghost.classList.add("rotate");
+	//	}
 	ev.dataTransfer.setDragImage(ghost, xPosition, imageWidth/2);
 }
 
@@ -388,9 +502,6 @@ function printAShip(cellInfo, kindOfShip, elementDragging, changing){
 	var color = "colored"+kindOfShip;
 	var cellNumber = cellInfo.getAttribute("userCell");
 	if (forbidden == false){
-		//		if (itIsInsideTheGrid){
-		//			removeFromTheGrid(kindOfShip, color);
-		//		}
 		var occupied = false;
 		var letter = cellNumber.split("")[0];
 		var num1 = cellNumber.split("")[1];
@@ -406,8 +517,9 @@ function printAShip(cellInfo, kindOfShip, elementDragging, changing){
 			if (occupied != true){
 				printVerticalShip(letter);
 			} else {
-				alert ("wrong location");
+				alert ("wrong location in checkOverlappingVertical");
 			}
+
 			function checkOverlappingVertical(letter){
 				var newPosition = 0;
 				var name = cellInfo.getAttribute("data-name");
@@ -434,18 +546,24 @@ function printAShip(cellInfo, kindOfShip, elementDragging, changing){
 			}
 
 			function printVerticalShip(letter){
-				var newPosition = 0;
+				console.log ("printing vertical");
+				console.log (letter);
+				console.log (number);
+				//				var newPosition = 0;
 				var name = cellInfo.getAttribute("data-name");
 				removeFromTheGrid (name, color);
 				for (var i=0; i<long; i++){
-					var numberOfCell = number+i;
+					console.log ("entering the loop")
+					console.log (letter);
+					console.log (number)
 					var finalCell = document.querySelector("[userCell='"+letter+number+"']");
 					var image= document.createElement("img");
 					image.setAttribute("src", "images/ship.png");
-					image.setAttribute("data-position", newPosition);
+					//					image.setAttribute("data-position", i);
 					finalCell.classList.add("shipToDrag", color);
 					finalCell.setAttribute("draggable", true);
-					finalCell.setAttribute("position", "vertical");
+					finalCell.setAttribute("orientation", "vertical");
+					finalCell.setAttribute("data-position", i);
 					finalCell.setAttribute("ondragstart", "drag(event)");
 					finalCell.setAttribute("data-name", kindOfShip);
 					finalCell.setAttribute("data-occupied", "yes");
@@ -463,13 +581,13 @@ function printAShip(cellInfo, kindOfShip, elementDragging, changing){
 			checkOverlappingHorizontal (number);
 			if (occupied != true){
 				printHorizonalShip(number);
-				
 			} else {
-				alert ("wrong location");
+				alert ("wrong location in checkOverlappingHorizontal");
 			}
 		}
 
 		function checkOverlappingHorizontal(number){
+			var position = Number(cellInfo.getAttribute("data-position"));
 			occupied = false;
 			var newPosition = 0;
 			var name = cellInfo.getAttribute("data-name");
@@ -497,10 +615,11 @@ function printAShip(cellInfo, kindOfShip, elementDragging, changing){
 				var finalCell = document.querySelector("[userCell='"+letter+numberOfCell+"']");
 				var image= document.createElement("img");
 				image.setAttribute("src", "images/ship.png");
-				image.setAttribute("data-position", newPosition);
+				//				image.setAttribute("data-position", newPosition);
 				finalCell.classList.add("shipToDrag", color);
 				finalCell.setAttribute("draggable", true);
-				finalCell.setAttribute("position", "horizontal");
+				finalCell.setAttribute("data-position", i);
+				finalCell.setAttribute("orientation", "horizontal");
 				finalCell.setAttribute("ondragstart", "drag(event)");
 				finalCell.setAttribute("data-name", kindOfShip);
 				finalCell.setAttribute("data-occupied", "yes");
@@ -530,13 +649,14 @@ function removeFromTheGrid (kindOfShip, color){
 		td.classList.remove(color);
 		td.classList.remove("shipToDrag");
 		td.removeAttribute("draggable", true);
-		td.setAttribute("draggable", false);
 		td.removeAttribute("ondragstart", "drag(event)");
 		td.removeAttribute("data-name", kindOfShip);
-		td.removeAttribute("position", "horizontal");
-		td.setAttribute("ondrop", "drop(event)");
+		td.removeAttribute("data-position");
+		td.removeAttribute("orientation", "horizontal");
 		td.removeAttribute("data-occupied", "yes");
 		td.removeEventListener('click', changeOrientation);
+		td.setAttribute("draggable", false);
+		td.setAttribute("ondrop", "drop(event)");
 		td.setAttribute("ondragover", "allowDrop(event)");
 		td.removeChild(td.children["0"]);
 	}
@@ -545,7 +665,7 @@ function removeFromTheGrid (kindOfShip, color){
 function changeOrientation(e){
 	var element = e.path[1];
 	takeLongOfShip(element);
-	var orientation = element.getAttribute("position");
+	var orientation = element.getAttribute("orientation");
 	var kindOfShip = element.getAttribute("data-name");
 	if (orientation=="horizontal"){
 		var changing = "changingToVertical";

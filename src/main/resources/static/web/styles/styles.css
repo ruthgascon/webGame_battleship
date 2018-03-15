@@ -25,7 +25,7 @@ h3{
 }
 
 .hidden {
-	display: none;
+	display: none !important;
 }
 
 .margin-bottom {
@@ -69,7 +69,13 @@ button {
 
 /******Index table = leaderboard******/
 .leaderboardTable{
+
 	margin-bottom: 20px;
+
+}
+
+.leaderboardTable table{
+	width: 600px;
 }
 
 .leaderboardTable thead{
@@ -80,6 +86,30 @@ button {
 .leaderboardTable tbody{
 	background-color: #cce6ff;
 	color: black;
+}
+
+.leaderboardTable tr{
+	height: 45px;
+}
+
+.leaderboardTable th{
+	min-width: 50px;
+}
+
+.position p{
+	color: black;
+	margin: 0;
+	padding-top: 5px;
+}
+
+.positionDiv {
+	text-align: center;
+	background-color: #fff0b3;
+	border-radius: 50px;
+	height: 30px;
+	width: 30px;
+	margin: auto;
+	border: 5px solid #ffd633;
 }
 
 /******Login Space******/
@@ -191,16 +221,56 @@ input:-webkit-autofill {
 	background-color:  #fff0b3;
 }
 
+.gamesTable tr {
+	height: 40px;
+}
+
+.gamesTable td {
+	min-width: 30px;
+}
+
 .newGameButton button{
 	margin-top: 20px;
 	width: 100px;
+	height: 30px;
 	border-color: rgb(216, 216, 216) rgb(209, 209, 209) rgb(186, 186, 186);
 	border-style: solid;
 	border-width: 1px;
 	padding: 1px 7px 2px;
+/*	box-shadow: 2px 2px 2px rgb(216, 216, 216);*/
+/*	background-color: white;*/
+/*	border-radius: 5px;*/
 }
 
-/******Games Table******/
+.generalButton button {
+	width: 100px;
+	height: 30px;
+	border-color: rgb(216, 216, 216) rgb(209, 209, 209) rgb(186, 186, 186);
+	border-style: solid;
+	border-width: 1px;
+	padding: 1px 7px 2px;
+	box-shadow: 2px 2px 2px rgb(216, 216, 216);
+	background-color: white;
+	border-radius: 5px;
+}
+
+.generalButton button:hover{
+	box-shadow: 0px 0px 0px;
+}
+
+.playColumn {
+	background-color: white;
+}
+
+.playColumn a svg{
+	color: #bbff33;
+}
+
+.playColumn a svg:hover{
+	color: 	#77b300;
+}
+
+/******Game Table******/
 
 .gameTable {
 	margin: auto;
@@ -238,11 +308,11 @@ input:-webkit-autofill {
 	background-color: #e6ffe6 !important;
 }
 
-.coloredPatrolBoat {
+.coloredPatrol {
 	background-color: #ffddcc !important;
 }
 
-.coloredBattleShip {
+.coloredBattleship {
 	background-color: #ffe699 !important;
 }
 
@@ -307,10 +377,10 @@ input:-webkit-autofill {
 }
 
 #div1 {
-    width: 350px;
-    height: 70px;
-    padding: 10px;
-    border: 1px solid #aaaaaa;
+	width: 350px;
+	height: 70px;
+	padding: 10px;
+	border: 1px solid #aaaaaa;
 }
 
 .dragging{
@@ -321,4 +391,31 @@ input:-webkit-autofill {
 	margin-top: 10px;
 	width: 300px;
 	margin-bottom: 20px;
+}
+
+.rotate {
+	transform: rotate(90deg);
+}
+
+.salvoButton{
+	margin-bottom: 100px;
+}
+
+.shotPendant{
+	background-color: red !important;
+}
+
+/*
+.salvoText{
+	display: block;
+	justify-content: center;
+}
+*/
+
+.salvoText p {
+	font-size: 12px;
+}
+
+.margin-bottom-100{
+	margin-bottom: 100px;
 }

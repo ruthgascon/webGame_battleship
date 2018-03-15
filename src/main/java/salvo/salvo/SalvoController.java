@@ -6,9 +6,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import java.util.Comparator;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.persistence.Id;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -31,6 +34,9 @@ public class SalvoController {
     @Autowired
     private ShipRepository shipRepository;
 
+    @Autowired
+    private SalvoRepository salvoRepository;
+
     ///////////////LARGEST OBJECT///////////////
     @RequestMapping("/games")
     public Map<String, Object> loggedIn() {
@@ -43,7 +49,7 @@ public class SalvoController {
 
     @RequestMapping(path = "/games", method = RequestMethod.POST)
     public ResponseEntity<Map<String, Object>> creatingGame(Authentication authentication) {
-        if (authentication == null){
+        if (authentication == null) {
             return new ResponseEntity<Map<String, Object>>(errorMap("FORBIDDEN", "Log in, please"), HttpStatus.UNAUTHORIZED);
         } else {
             Player player = playerRepository.findByUserName(authentication.getName());
@@ -98,6 +104,7 @@ public class SalvoController {
         // CREATE A LIST of maps WITH GAME PLAYERS
         List<Object> gameplayersDTO = game.getGamePlayers()
                 .stream()
+                .sorted(Comparator.comparing(GamePlayer::getId))
                 .map(gamePlayer -> makeGamePlayerDTO(gamePlayer))
                 .collect(Collectors.toList());
         dto.put("Game Players", gameplayersDTO);
@@ -120,37 +127,36 @@ public class SalvoController {
         return dto;
     }
 
-    @RequestMapping(path="/games/{id}/players", method = RequestMethod.POST)
-    public ResponseEntity<Map<String, Object>> joinGame (Authentication authentication, @PathVariable Long id){
+    @RequestMapping(path = "/games/{id}/players", method = RequestMethod.POST)
+    public ResponseEntity<Map<String, Object>> joinGame(Authentication authentication, @PathVariable Long id) {
         Player player = playerRepository.findByUserName(authentication.getName());
-        if (player == null){
+        if (player == null) {
             return new ResponseEntity<>(errorMap("FORBIDDEN", "Log in, please"), HttpStatus.FORBIDDEN);
         } else {
             Game game = gameRepository.findOne(id);
-            if (game == null){
+            if (game == null) {
                 return new ResponseEntity<>(errorMap("NO SUCH GAME", "Join another"), HttpStatus.FORBIDDEN);
             } else {
                 Set<GamePlayer> gamePlayers = game.getGamePlayers();
-               if (gamePlayers.size() ==2 ){
+                if (gamePlayers.size() == 2) {
                     return new ResponseEntity<>(errorMap("GAME'S FULL", "Join another"), HttpStatus.FORBIDDEN);
                 } else {
-                    if (gamePlayers.stream().filter(g-> g.getPlayer().getId() == player.getId()).findFirst().orElse(null) != null){
+                    if (gamePlayers.stream().filter(g -> g.getPlayer().getId() == player.getId()).findFirst().orElse(null) != null) {
                         return new ResponseEntity<>(errorMap("YOU ARE IN THE GAME", "Join another"), HttpStatus.FORBIDDEN);
                     } else {
                         GamePlayer gp = new GamePlayer(player, game);
                         gamePlayerRepository.save(gp);
                         return new ResponseEntity<>(gamePlayerID(gp), HttpStatus.CREATED);
                     }
-
                 }
             }
-
         }
     }
 
-    private Map<String, Object> gamePlayerID (GamePlayer gp) {
+
+    private Map<String, Object> gamePlayerID(GamePlayer gp) {
         Map<String, Object> dto = new LinkedHashMap<>();
-        dto.put("GamePlayerID", gp.getId() );
+        dto.put("GamePlayerID", gp.getId());
         return dto;
     }
 
@@ -175,14 +181,13 @@ public class SalvoController {
             Player player = playerRepository.findByUserName(authentication.getName());
             Set<GamePlayer> gameplayers = player.getGamePlayers();
             if (gameplayers.size() > 0) {
-
                 for (GamePlayer gameplayer : gameplayers) {
                     long id = gameplayer.getId();
                     if (id == gamePlayerID) {
                         match = true;
                     }
                 }
-                if (match){
+                if (match) {
                     return new ResponseEntity<Map<String, Object>>(findGamePlayer(gamePlayerID, authentication), HttpStatus.OK);
                 } else {
                     return new ResponseEntity<Map<String, Object>>(errorMap("NO MATCH", "It's not your game player"), HttpStatus.UNAUTHORIZED);
@@ -193,18 +198,18 @@ public class SalvoController {
         }
     }
 
-    private Map <String, Object> errorMap (String what, String reason){
+    private Map<String, Object> errorMap(String what, String reason) {
         Map<String, Object> dto = new LinkedHashMap<>();
         dto.put(what, reason);
         return dto;
     }
 
-    private Map<String,Object> findGamePlayer(Long gamePlayerID, Authentication authentication) {
+    private Map<String, Object> findGamePlayer(Long gamePlayerID, Authentication authentication) {
         GamePlayer gamePlayer = gamePlayerRepository.findOne(gamePlayerID);
         Game game = gamePlayer.getGame();
         Map<String, Object> dto = new LinkedHashMap<>();
-        dto.put ("GAME ID", game.getId());
-        dto.put ("Created", game.getCreatedDate());
+        dto.put("GAME ID", game.getId());
+        dto.put("Created", game.getCreatedDate());
         List<Object> makeGamePlayerDTO2 = game.getGamePlayers()
                 .stream()
                 .map(GamePlayer -> makeGamePlayerDTO(GamePlayer))
@@ -217,6 +222,7 @@ public class SalvoController {
         dto.put("Ships", makeShipsDTO2);
         List<Object> makeSalvoesDTO2 = game.getGamePlayers()
                 .stream()
+
                 .map(GamePlayer -> makeSalvoGamePlayerDTO(GamePlayer))
                 .collect(Collectors.toList());
         dto.put("Salvoes", makeSalvoesDTO2);
@@ -224,26 +230,27 @@ public class SalvoController {
     }
 
 
-
     private Map<String, Object> makeShipDTO(Ship ship) {
-        Map<String,Object> dto = new LinkedHashMap<>();
+        Map<String, Object> dto = new LinkedHashMap<>();
         dto.put("Type", ship.getType());
         dto.put("Locations", ship.getLocations());
         return dto;
     }
 
-    private Map<String,Object> makeSalvoGamePlayerDTO(GamePlayer gamePlayer){
+    private Map<String, Object> makeSalvoGamePlayerDTO(GamePlayer gamePlayer) {
         Map<String, Object> dto = new LinkedHashMap<>();
         dto.put("GamePlayer", gamePlayer.getId());
         List<Object> Salvosdto = gamePlayer.getSalvos()
                 .stream()
+                .filter(salvo -> salvo.getTurnNumber() != null)
+                .sorted(Comparator.comparing(Salvo::getTurnNumber))
                 .map(Salvo -> makeSalvoesDTO(Salvo))
                 .collect(Collectors.toList());
-        dto.put ("Salvoes", Salvosdto);
+        dto.put("Salvoes", Salvosdto);
         return dto;
     }
 
-    private Map <String, Object> makeSalvoesDTO (Salvo salvo){
+    private Map<String, Object> makeSalvoesDTO(Salvo salvo) {
         Map<String, Object> dto = new LinkedHashMap<String, Object>();
         dto.put("Turn", salvo.getTurnNumber());
         dto.put("Locations", salvo.getLocations());
@@ -259,19 +266,19 @@ public class SalvoController {
                 .collect(Collectors.toList());
     }
 
-    private Map <String, Object> makePlayerScoresDTO(Player player){
-        Map<String,Object> dto = new LinkedHashMap<>();
-        dto.put ("Player", player.getUserName());
+    private Map<String, Object> makePlayerScoresDTO(Player player) {
+        Map<String, Object> dto = new LinkedHashMap<>();
+        dto.put("Player", player.getUserName());
         Set<Score> scoreList = player.getScores();
-        dto.put ("All Scores", makeFinalScoresDTO(scoreList));
-        dto.put ("Total", makeSum(scoreList));
-        dto.put ("Wins", makeCounter(scoreList, 1.00));
-        dto.put ("Lose", makeCounter(scoreList, 0.00));
-        dto.put ("Tie", makeCounter(scoreList, 0.50));
+        dto.put("All Scores", makeFinalScoresDTO(scoreList));
+        dto.put("Total", makeSum(scoreList));
+        dto.put("Wins", makeCounter(scoreList, 1.00));
+        dto.put("Lose", makeCounter(scoreList, 0.00));
+        dto.put("Tie", makeCounter(scoreList, 0.50));
         return dto;
     }
 
-    private Map<String, List> makeFinalScoresDTO (Set<Score> scoreList) {
+    private Map<String, List> makeFinalScoresDTO(Set<Score> scoreList) {
         Map<String, List> scoresList = new LinkedHashMap<>();
         List<Double> allScores = new ArrayList<>();
         for (Score score : scoreList) {
@@ -281,7 +288,7 @@ public class SalvoController {
         return scoresList;
     }
 
-    private Double makeSum (Set<Score> scoreList){
+    private Double makeSum(Set<Score> scoreList) {
         Double total = 0.00;
         for (Score score : scoreList) {
             total += score.getFinalScore();
@@ -289,7 +296,7 @@ public class SalvoController {
         return total;
     }
 
-    private Integer makeCounter (Set<Score> scoreList, Double number){
+    private Integer makeCounter(Set<Score> scoreList, Double number) {
         Integer total = 0;
         for (Score score : scoreList) {
             if (score.getFinalScore().equals(number)) {
@@ -299,33 +306,128 @@ public class SalvoController {
         return total;
     }
 
-    @RequestMapping(path = "/games/players/{gamePlayerId}/ships")
-    public ResponseEntity<Map<String, Object>> getSetOfShips(@PathVariable Long gamePlayerId, Authentication authentication, @RequestBody Set<Ship> ships){
-        System.out.println(ships);
+    @RequestMapping(path = "/games/players/{gamePlayerId}/ships", method = RequestMethod.POST)
+    public ResponseEntity<Map<String, Object>> getSetOfShips(@PathVariable Long gamePlayerId, Authentication authentication, @RequestBody Set<Ship> ships) {
         if (authentication == null) {
             return new ResponseEntity<Map<String, Object>>(errorMap("NO GAME PLAYER", "Join a game"), HttpStatus.UNAUTHORIZED);
 
-        } else{
+        } else {
             Player player = playerRepository.findByUserName(authentication.getName());
-            GamePlayer gameplayer = gamePlayerRepository.findOne(gamePlayerId);
-            if (gameplayer.getShips().size() != 0 || gameplayer.getId() != gamePlayerId || ships.size() > 5){
-//            if (gameplayer.getShips().size() != 0 || gameplayer.getId() !=) game{
-                return new ResponseEntity<Map<String, Object>>(errorMap("check again", "you are not that game player, ships already placed or too many ships"), HttpStatus.FORBIDDEN);
-            } else{
-                List<String> shipLocation = new ArrayList<>();
-
-                for (Ship ship : ships){
-                    List<String> locations = ship.getLocations();
-                    for (String location : locations){
-                        shipLocation.add(location);
-                    }
-                    String type = ship.getType();
-                    Ship newShip = new Ship(type, locations, gameplayer);
-                    shipRepository.save(newShip);
-                }
-                return new ResponseEntity<Map<String, Object>>(errorMap("CREATED", "Join a game"), HttpStatus.OK);
+            GamePlayer gamePlayer = gamePlayerRepository.findOne(gamePlayerId);
+            if (gamePlayer.getShips().size() != 0 || gamePlayer.getId() != gamePlayerId || ships.size() > 5) {
+                return new ResponseEntity<Map<String, Object>>(errorMap("ERROR", "you are not that game player, ships already placed or too many ships"), HttpStatus.FORBIDDEN);
             }
+            if (checkShips(ships, gamePlayer)) {
+                saveShips(ships, gamePlayer);
+            } else {
+                return new ResponseEntity<Map<String, Object>>(errorMap("ERROR", "ships not well located"), HttpStatus.FORBIDDEN);
+            }
+
+        }
+        return new ResponseEntity<Map<String, Object>>(errorMap("CREATED", "Join a game"), HttpStatus.OK);
+    }
+
+    public boolean checkShips(Set<Ship> ships, GamePlayer gamePlayer) {
+        List<String> locationsOk = new ArrayList<>();
+        for (Ship ship : ships) {
+            List<String> locations = ship.getLocations();
+            for (String location : locations) {
+                if (location.length() > 3) {
+                    return false;
+                } else if (location.length() < 2) {
+                    return false;
+                }
+                char letter = location.charAt(0);
+                String stringNumber = location.substring(1, location.length());
+                Integer number = Integer.parseInt(stringNumber);
+                if (letter < 'A' || letter > 'J') {
+                    return false;
+                }
+                if (number < 0 || number > 10) {
+                    return false;
+                }
+                if (locationsOk.contains(location)) {
+                    return false;
+                }
+                locationsOk.add(location);
+            }
+        }
+        return true;
+    }
+
+    public void saveShips(Set<Ship> ships, GamePlayer gamePlayer) {
+        for (Ship ship : ships) {
+            List<String> locations = ship.getLocations();
+            String type = ship.getType();
+            Ship newShip = new Ship(type, locations, gamePlayer);
+            shipRepository.save(newShip);
         }
     }
 
+    @RequestMapping(path = "/games/players/{gamePlayerId}/salvos", method = RequestMethod.POST)
+    public ResponseEntity<Map<String, Object>> showSalvos(Authentication authentication, @PathVariable Long gamePlayerId, @RequestBody Salvo salvo) {
+        GamePlayer gamePlayer = gamePlayerRepository.findOne(gamePlayerId);
+        if (authentication == null) {
+            return new ResponseEntity<Map<String, Object>>(errorMap("NO GAME PLAYER", "Log in please"), HttpStatus.UNAUTHORIZED);
+        } else {
+            // gamePlayer no es nulo??
+            Player playerAuthenticated = playerRepository.findByUserName(authentication.getName());
+            Long idOfCurrentPlayerOfGP = gamePlayer.getPlayer().getId();
+                    if (idOfCurrentPlayerOfGP == playerAuthenticated.getId()){
+                        if (checkSalvos(salvo, gamePlayer) == true){
+                            Set<Salvo> salvos = gamePlayer.getSalvos();
+                            int currentTurn = lastTurn (salvos) +1;
+                            // DEFINIR TURNO
+                            salvo.setTurnNumber(currentTurn);
+                            salvo.setGamePlayer(gamePlayer);
+                            salvoRepository.save(salvo);
+                            return new ResponseEntity<Map<String, Object>>(errorMap("CREATED", "New salvo shot"), HttpStatus.OK);
+                        } else {
+                            return new ResponseEntity<Map<String, Object>>(errorMap("SHOOT AGAIN", "A location has been shot twice"), HttpStatus.FORBIDDEN);
+                        }
+                    }
+        }
+        return new ResponseEntity<Map<String, Object>>(errorMap("YOU ARE NOT THAT GAME PLAYER", "Start a game"), HttpStatus.FORBIDDEN);
+    }
+
+    private int lastTurn(Set <Salvo> salvos){
+        if (salvos.isEmpty()) return 0;
+        return salvos.stream()
+                .sorted(Comparator.comparing(Salvo::getTurnNumber).reversed())
+                .findFirst()
+                .get().getTurnNumber();
+    }
+
+    private int opponentlastTurn(GamePlayer gamePlayer){
+        Game game = gamePlayer.getGame();
+        long currentGPid = gamePlayer.getId();
+        Set<GamePlayer> gamePlayers = game.getGamePlayers();
+        for (GamePlayer GP : gamePlayers){
+            if (GP.getId() != currentGPid){
+                Set<Salvo> salvos = GP.getSalvos();
+                if (salvos.isEmpty()) return 0;
+                return salvos.stream()
+                        .sorted(Comparator.comparing(Salvo::getTurnNumber).reversed())
+                        .findFirst()
+                        .get().getTurnNumber();
+            }
+        }
+        return 0;
+    }
+
+    private boolean checkSalvos (Salvo salvo, GamePlayer gamePlayer){
+        Set<Salvo> salvosAlreadyFired = gamePlayer.getSalvos();
+        List<String> locations = salvo.getLocations();
+            for (String location : locations){
+                for (Salvo salvoAlreadyFired : salvosAlreadyFired){
+                    List<String> locationsOfSAF = salvoAlreadyFired.getLocations();
+                    for (String locationOfSAF : locationsOfSAF){
+                        if (location == locationOfSAF){
+                            return false;
+                        }
+                    }
+                }
+            }
+        return true;
+    }
 }

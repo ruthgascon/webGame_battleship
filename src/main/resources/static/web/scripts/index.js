@@ -8,7 +8,7 @@ $( document ).ready(function() {
 		var tableSpace = $('#leaderboardTable');
 		var leaderboardData = data;
 		printleaderBoard(tableSpace, leaderboardData);
-		console.log (leaderboardData);
+//		console.log (leaderboardData);
 		hideloading();
 	});
 
@@ -82,6 +82,9 @@ $( document ).ready(function() {
 		table.append (tbody);
 		var header = document.createElement ('tr');
 		thead.append (header);
+		var thPosition = document.createElement ('th');
+		thPosition.innerHTML = "Position";
+		header.append(thPosition);
 		var thName = document.createElement ('th');
 		thName.innerHTML = "Name";
 		header.append(thName);
@@ -102,6 +105,16 @@ $( document ).ready(function() {
 			//create elements for the body of the table
 			var row = document.createElement ('tr');
 			tbody.append(row);
+			//create each position
+			var positionCell = document.createElement ('td');
+			var positionDiv = document.createElement ('div');
+			var positionText = document.createElement ('p');
+			positionText.innerHTML = i+1;
+			positionDiv.append (positionText);
+			positionDiv.classList.add("positionDiv");
+			positionCell.append (positionDiv);
+			positionCell.classList.add("position");
+			row.append(positionCell);
 			//create each name
 			var nameCell = document.createElement ('td');
 			nameCell.innerHTML = leaderboardData[i].Player;

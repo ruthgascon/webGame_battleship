@@ -93,6 +93,7 @@ $( document ).ready(function() {
 				}
 			}
 			var td = document.createElement('td');
+			td.classList.add("playColumn");
 			var icon = document.createElement('i');
 			//if the 
 			if (match == true){
@@ -103,6 +104,7 @@ $( document ).ready(function() {
 				a.appendChild(icon);
 				a.title = "game";
 				a.href = "game.html?gp="+GPID;
+				
 				td.appendChild (a);
 			} else {
 				icon.classList.add("fas","fa-times");
@@ -122,16 +124,9 @@ $( document ).ready(function() {
 		$.ajax( "/api/games").done(function(data){
 			var playerInfo = data.Player;
 			if (playerInfo!=null){
-				//				$("#login-form").addClass("hidden");
-				//				$('#logoutform').removeClass("hidden");
-				//				$('#loginform').addClass("hidden");
 				$("#greetings").text("Hello, "+ data.Player.Mail).removeClass("hidden");
 				loggedInPlayerInfo = playerInfo;
 			} else {
-
-				//				$("#login-form").removeClass("hidden");
-				//				$('#logoutform').addClass("hidden");
-				//				$('#loginform').removeClass("hidden");
 				$("#greetings").addClass("hidden");
 			}
 		})
