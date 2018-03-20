@@ -19,6 +19,8 @@ public class Ship {
     @Column(name="location")
     private List<String> locations = new ArrayList<>();
 
+    private boolean sunk = false;
+
     private String type;
 
     public Ship() {
@@ -46,4 +48,13 @@ public class Ship {
     public GamePlayer getGamePlayer() {
         return gamePlayer;
     }
+
+    public boolean isSunk() {
+        return sunk;
+    }
+
+    public void setSunk(boolean sunk) {
+        this.sunk = sunk;
+    }
 }
+

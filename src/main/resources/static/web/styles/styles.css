@@ -419,3 +419,7 @@ input:-webkit-autofill {
 .margin-top-50{
 	margin-top: 50px;
 }
+
+.sunkShip{
+	background-color: black !important;
+}

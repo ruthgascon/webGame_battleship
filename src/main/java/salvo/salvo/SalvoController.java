@@ -232,6 +232,8 @@ public class SalvoController {
 
     private List <Object> checkHits (GamePlayer gamePlayer, Set<GamePlayer> gamePlayers){
         List <Object> hits = new ArrayList<>();
+        Map<String, Integer> counter = new LinkedHashMap<>();
+
         for (GamePlayer GP : gamePlayers){
             if (GP.getId() != gamePlayer.getId()){
                 Set<Ship> opponentShips = GP.getShips();
@@ -242,10 +244,19 @@ public class SalvoController {
                         List <String> currentGPsalvoLocations = currentGPsalvo.getLocations();
                         for (String location : currentGPsalvoLocations){
                             if (opponentShipLocations.stream().anyMatch(l -> l.equals(location))){
+                                if (!counter.containsKey(opponentShip.getType())){
+                                    counter.put(opponentShip.getType(), opponentShip.getLocations().size()-1);
+                                } else {
+                                    counter.put(opponentShip.getType(), counter.get(opponentShip.getType()) -1);
+                                }
+                                if (counter.get(opponentShip.getType()) == 0){
+                                    opponentShip.setSunk(true);
+                                }
                                 Map<String, Object> dto = new LinkedHashMap<>();
                                 dto.put ("typeOfShip", opponentShip.getType());
+                                dto.put ("sunk", opponentShip.isSunk());
                                 dto.put ("turn", currentGPsalvo.getTurnNumber());
-                                dto.put ("cell", opponentShipLocations.stream().filter(l -> l.equals(location)).collect(Collectors.toList()));
+                                dto.put ("cell", location);
                                 hits.add(dto);
                             }
                         }

@@ -157,17 +157,62 @@ $( document ).ready(function() {
 						$("["+where+"="+salvoLoc+"]").addClass("salvoes");
 					}
 				}
+				//				var allShips = [];
+
+				var cellsLong;
 				for (var i in hits){
+					console.log (hits[i]);
+					var everyShip = {name, length};
 					var turn = hits[i].turn;
+					console.log (turn);
 					var kindOfShip = hits[i].typeOfShip;
-					var cell = hits[i].cell[0];
-					$("["+where+"="+cell+"]").removeClass("salvoes");
+					calculateLongOfShip (kindOfShip);
+					var cell = hits[i].cell;
+					console.log ("the cell", cell);
 					$("["+where+"="+cell+"]").addClass("hittedShip");
+					$("["+where+"="+cell+"]").attr("data-type", kindOfShip);
 					var turnText = document.createElement ('p');
 					turnText.append(turn);
 					var child = $("["+where+"="+cell+"]").children("div");
 					child.append(turnText);
+					checkSunk(hits);
 				}
+
+				function checkSunk(hits){
+					console.log ("hits", hits);
+					for (var i in hits){
+						if (hits[i].sunk){
+							console.log (hits[i].typeOfShip, "has been sunk");
+							$("[data-type='"+hits[i].typeOfShip+"']").addClass("sunkShip")
+//							console.log ("cells", cells);
+//							for (var y in cells){
+//							}
+//							cells.forEach(function(element){
+//								console.log (element);
+//							})
+			//							for (var y in cells){
+			//								console.log (cells[y]);
+			////								cells[y].classList.add("sunkShip");
+			//							}
+						}
+
+					}
+				}
+
+				function calculateLongOfShip (kindOfShip){
+					if (kindOfShip == "Destroyer"){
+						cellsLong = 3;
+					} else if(kindOfShip == "Submarine"){
+						cellsLong = 3;
+					} else if (kindOfShip == "Carrier"){
+						cellsLong = 5;
+					} else if (kindOfShip == "Battleship"){
+						cellsLong = 4;
+					} else if (kindOfShip == "Patrol Boat"){
+						cellsLong = 2;
+					}
+				}
+
 			}
 
 			function hideloading (){
@@ -249,16 +294,18 @@ $( document ).ready(function() {
 			if (shotCells.length > 4){
 				alert ("only 5!!!!");
 			} else {
+				if(cell.tagName=="P"){
+					cell = cell.parentElement;
+				} 
 				if(cell.tagName=="DIV"){
 					cell = cell.parentElement;
 				}
-				if (cell.classList.contains("salvoes")){
+				if (cell.classList.contains("salvoes") || cell.classList.contains("hittedShip")){
 					alert ("you have already shot here");
-				} else {
+				} else if (cell.tagName =="TD"){
 					cell.classList.add("shotPendant");
 					cell.setAttribute("data-shooted", "yes");
 				}
-
 			}
 		}
 	});

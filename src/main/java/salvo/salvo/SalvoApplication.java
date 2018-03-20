@@ -125,7 +125,7 @@ public class SalvoApplication {
             List<String> ship7Loc = new ArrayList<>();
             ship7Loc.add("G6");
             ship7Loc.add("H6");
-            Ship ship7 = new Ship("Patrol Boat", ship7Loc, gp2);
+            Ship ship7 = new Ship("Carrier", ship7Loc, gp2);
             shipRepository.save(ship7);
 
             List<String> ship8Loc = new ArrayList<>();
