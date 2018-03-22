@@ -423,3 +423,7 @@ input:-webkit-autofill {
 .sunkShip{
 	background-color: black !important;
 }
+
+.red{
+	color: red;
+}

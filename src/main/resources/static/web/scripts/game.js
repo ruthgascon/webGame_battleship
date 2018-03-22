@@ -1,4 +1,4 @@
-$( document ).ready(function() {
+$(document).ready(function() {
 
 	function getParameterByName(name, url) {
 		if (!url) url = window.location.href;
@@ -18,7 +18,6 @@ $( document ).ready(function() {
 			url: "http://localhost:8080/api/game_view/" + gamePlayerID,
 			context: document.body
 		}).done(function(data) {
-			console.log (data);
 			createTable (10, document.getElementById("userTable"), "userCell");
 			createTable (10, document.getElementById("salvoTable"), "salvoesCell");
 			getShips();
@@ -126,7 +125,7 @@ $( document ).ready(function() {
 			}
 
 			function printSalvos (whomSalvos, where, hits) {
-				//				console.log (where);
+				var cellsLong;
 				var salvos = whomSalvos;
 				//FUNCTION TO SORT THE SALVOS BY TURN
 				function compare(a,b) {
@@ -157,45 +156,43 @@ $( document ).ready(function() {
 						$("["+where+"="+salvoLoc+"]").addClass("salvoes");
 					}
 				}
-				//				var allShips = [];
 
-				var cellsLong;
 				for (var i in hits){
-					console.log (hits[i]);
+					//					console.log (hits[i]);
 					var everyShip = {name, length};
-					var turn = hits[i].turn;
-					console.log (turn);
-					var kindOfShip = hits[i].typeOfShip;
+					var turn = hits[i].Turn;
+					//					console.log (turn);
+					var kindOfShip = hits[i].TypeOfShip;
 					calculateLongOfShip (kindOfShip);
-					var cell = hits[i].cell;
-					console.log ("the cell", cell);
+					var cell = hits[i].Cell;
+					//					console.log ("the cell", cell);
 					$("["+where+"="+cell+"]").addClass("hittedShip");
 					$("["+where+"="+cell+"]").attr("data-type", kindOfShip);
 					var turnText = document.createElement ('p');
 					turnText.append(turn);
 					var child = $("["+where+"="+cell+"]").children("div");
 					child.append(turnText);
-					checkSunk(hits);
+
 				}
 
+				checkSunk(hits);
+				checkNumberOfOpponentShips(hits);
+
 				function checkSunk(hits){
-					console.log ("hits", hits);
 					for (var i in hits){
-						if (hits[i].sunk){
-							console.log (hits[i].typeOfShip, "has been sunk");
-							$("[data-type='"+hits[i].typeOfShip+"']").addClass("sunkShip")
-//							console.log ("cells", cells);
-//							for (var y in cells){
-//							}
-//							cells.forEach(function(element){
-//								console.log (element);
-//							})
-			//							for (var y in cells){
-			//								console.log (cells[y]);
-			////								cells[y].classList.add("sunkShip");
-			//							}
+						if (hits[i].Sunk){
+							$("[data-type='"+hits[i].TypeOfShip+"']").addClass("sunkShip")
 						}
 
+					}
+				}
+
+				function checkNumberOfOpponentShips(hits){
+					var title = $('#titleYourSalvoes');
+					if (data["Ships alive"].length == 0){
+						var p = document.createElement("p");
+						p.innerHTML = "winner";
+						title.append(p);
 					}
 				}
 

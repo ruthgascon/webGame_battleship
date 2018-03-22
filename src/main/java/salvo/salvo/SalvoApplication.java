@@ -103,49 +103,57 @@ public class SalvoApplication {
             shipRepository.save(ship3);
 
             List<String> ship4Loc = new ArrayList<>();
-            ship4Loc.add("B5");
-            ship4Loc.add("C5");
-            ship4Loc.add("D5");
-            Ship ship4 = new Ship("Destroyer", ship4Loc, gp2);
+            ship4Loc.add("A6");
+            ship4Loc.add("A7");
+            ship4Loc.add("A8");
+            ship4Loc.add("A9");
+            ship4Loc.add("A10");
+            Ship ship4 = new Ship("Carrier", ship4Loc, gp1);
             shipRepository.save(ship4);
 
             List<String> ship5Loc = new ArrayList<>();
-            ship5Loc.add("C6");
-            ship5Loc.add("C7");
-            Ship ship5 = new Ship("Patrol Boat", ship5Loc, gp2);
+            ship5Loc.add("G4");
+            ship5Loc.add("H4");
+            ship5Loc.add("I4");
+            ship5Loc.add("J4");
+            Ship ship5 = new Ship("Battleship", ship5Loc, gp1);
             shipRepository.save(ship5);
 
             List<String> ship6Loc = new ArrayList<>();
-            ship6Loc.add("A2");
-            ship6Loc.add("A3");
-            ship6Loc.add("A4");
-            Ship ship6 = new Ship("Submarine", ship6Loc, gp2);
+            ship6Loc.add("H2");
+            ship6Loc.add("H3");
+            ship6Loc.add("H4");
+            Ship ship6 = new Ship("Destroyer", ship6Loc, gp2);
             shipRepository.save(ship6);
 
             List<String> ship7Loc = new ArrayList<>();
-            ship7Loc.add("G6");
-            ship7Loc.add("H6");
-            Ship ship7 = new Ship("Carrier", ship7Loc, gp2);
+            ship7Loc.add("E1");
+            ship7Loc.add("F1");
+            ship7Loc.add("G1");
+            Ship ship7 = new Ship("Submarine", ship7Loc, gp2);
             shipRepository.save(ship7);
 
             List<String> ship8Loc = new ArrayList<>();
-            ship8Loc.add("B5");
-            ship8Loc.add("C5");
-            ship8Loc.add("D5");
-            Ship ship8 = new Ship("Destroyer", ship8Loc, gp3);
+            ship8Loc .add("B4");
+            ship8Loc .add("B5");
+            Ship ship8 = new Ship("Patrol Boat", ship8Loc, gp2);
             shipRepository.save(ship8);
 
             List<String> ship9Loc = new ArrayList<>();
-            ship9Loc.add("C6");
-            ship9Loc.add("C7");
-            Ship ship9 = new Ship("Patrol Boat", ship9Loc, gp3);
+            ship9Loc.add("A6");
+            ship9Loc.add("A7");
+            ship9Loc.add("A8");
+            ship9Loc.add("A9");
+            ship9Loc.add("A10");
+            Ship ship9 = new Ship("Carrier", ship9Loc, gp2);
             shipRepository.save(ship9);
 
             List<String> ship10Loc = new ArrayList<>();
-            ship10Loc.add("A2");
-            ship10Loc.add("A3");
-            ship10Loc.add("A4");
-            Ship ship10 = new Ship("Submarine", ship10Loc, gp3);
+            ship10Loc.add("G4");
+            ship10Loc.add("H4");
+            ship10Loc.add("I4");
+            ship10Loc.add("J4");
+            Ship ship10 = new Ship("Battleship", ship10Loc, gp2);
             shipRepository.save(ship10);
 
             List<String> salvo01Loc = new ArrayList<>();

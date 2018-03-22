@@ -227,13 +227,13 @@ public class SalvoController {
                 .collect(Collectors.toList());
         dto.put("Salvoes", makeSalvoesDTO2);
         dto.put ("Hits", checkHits(gamePlayer, game.getGamePlayers()));
+        dto.put ("Ships alive", checkShipsAlive(gamePlayer, game.getGamePlayers()));
         return dto;
     }
 
     private List <Object> checkHits (GamePlayer gamePlayer, Set<GamePlayer> gamePlayers){
         List <Object> hits = new ArrayList<>();
         Map<String, Integer> counter = new LinkedHashMap<>();
-
         for (GamePlayer GP : gamePlayers){
             if (GP.getId() != gamePlayer.getId()){
                 Set<Ship> opponentShips = GP.getShips();
@@ -253,10 +253,10 @@ public class SalvoController {
                                     opponentShip.setSunk(true);
                                 }
                                 Map<String, Object> dto = new LinkedHashMap<>();
-                                dto.put ("typeOfShip", opponentShip.getType());
-                                dto.put ("sunk", opponentShip.isSunk());
-                                dto.put ("turn", currentGPsalvo.getTurnNumber());
-                                dto.put ("cell", location);
+                                dto.put ("TypeOfShip", opponentShip.getType());
+                                dto.put ("Sunk", opponentShip.isSunk());
+                                dto.put ("Turn", currentGPsalvo.getTurnNumber());
+                                dto.put ("Cell", location);
                                 hits.add(dto);
                             }
                         }
@@ -264,8 +264,23 @@ public class SalvoController {
                 }
             }
         }
-
         return hits;
+    }
+
+    private List <Object> checkShipsAlive (GamePlayer gamePlayer, Set<GamePlayer> gamePlayers){
+        List <Object> ships = new ArrayList<>();
+        for (GamePlayer GP : gamePlayers){
+            if (GP.getId() != gamePlayer.getId()){
+                for (Ship ship : GP.getShips()){
+                    if (ship.isSunk() == false){
+                        Map<String, Object> dto = new LinkedHashMap<>();
+                        dto.put("ship", ship.getType());
+                        ships.add(dto);
+                    }
+                }
+            }
+        }
+        return ships;
     }
 
     private Map<String, Object> makeShipDTO(Ship ship) {
