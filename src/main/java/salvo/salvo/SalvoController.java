@@ -209,6 +209,7 @@ public class SalvoController {
         Game game = gamePlayer.getGame();
         Map<String, Object> dto = new LinkedHashMap<>();
         dto.put("GAME ID", game.getId());
+        dto.put("Game State", checkGameState(game, gamePlayer));
         dto.put("Created", game.getCreatedDate());
         List<Object> makeGamePlayerDTO2 = game.getGamePlayers()
                 .stream()
@@ -308,6 +309,17 @@ public class SalvoController {
         dto.put("Turn", salvo.getTurnNumber());
         dto.put("Locations", salvo.getLocations());
         return dto;
+    }
+
+    private GameState checkGameState(Game game, GamePlayer gamePlayer){
+        GameState state;
+        if (game.getGamePlayers().size() != 2){
+            state = GameState.WAITING_OPPONENT;
+        } else {
+            state = GameState.YOUR_TURN;
+        }
+
+        return state;
     }
 
     @GetMapping("/leaderboard")
