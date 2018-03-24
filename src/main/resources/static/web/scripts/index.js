@@ -8,7 +8,6 @@ $( document ).ready(function() {
 		var tableSpace = $('#leaderboardTable');
 		var leaderboardData = data;
 		printleaderBoard(tableSpace, leaderboardData);
-//		console.log (leaderboardData);
 		hideloading();
 	});
 

@@ -99,7 +99,7 @@ $(document).ready(function() {
 				var gamePlayers = data["Game Players"];
 				for (var x in gamePlayers){
 					if(gamePlayers.length <2) {
-						$("#User2").append("waiting your opponent...");
+						$("#User2").append("waiting your opponent");
 					};
 					var userID = gamePlayers[x]["Game Player ID"];
 					if (userID == gamePlayerID){
@@ -114,7 +114,7 @@ $(document).ready(function() {
 
 			function getSalvoes(){
 				var Salvoes = data.Salvoes;
-				var Hits = data.Hits;
+				var Hits = data["Your ships hitted"];
 				for (var i in Salvoes){
 					if (Salvoes[i].GamePlayer == gamePlayerID){
 						printSalvos (Salvoes[i].Salvoes, "salvoesCell", Hits);
@@ -176,7 +176,6 @@ $(document).ready(function() {
 				}
 
 				checkSunk(hits);
-				checkNumberOfOpponentShips(hits);
 
 				function checkSunk(hits){
 					for (var i in hits){
@@ -184,15 +183,6 @@ $(document).ready(function() {
 							$("[data-type='"+hits[i].TypeOfShip+"']").addClass("sunkShip")
 						}
 
-					}
-				}
-
-				function checkNumberOfOpponentShips(hits){
-					var title = $('#titleYourSalvoes');
-					if (data["Ships alive"].length == 0){
-						var p = document.createElement("p");
-						p.innerHTML = "winner";
-						title.append(p);
 					}
 				}
 
@@ -317,7 +307,6 @@ $(document).ready(function() {
 		if (listOfShoots.locations.length > 5){
 			alert ("you can only send 5 shoots at once")
 		} else {
-			console.log(listOfShoots);
 			sendSalvos(listOfShoots);
 		}
 	})

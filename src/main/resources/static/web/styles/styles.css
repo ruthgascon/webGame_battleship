@@ -237,9 +237,9 @@ input:-webkit-autofill {
 	border-style: solid;
 	border-width: 1px;
 	padding: 1px 7px 2px;
-/*	box-shadow: 2px 2px 2px rgb(216, 216, 216);*/
-/*	background-color: white;*/
-/*	border-radius: 5px;*/
+	/*	box-shadow: 2px 2px 2px rgb(216, 216, 216);*/
+	/*	background-color: white;*/
+	/*	border-radius: 5px;*/
 }
 
 .generalButton button {
