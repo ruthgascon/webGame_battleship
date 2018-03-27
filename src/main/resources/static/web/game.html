@@ -22,16 +22,43 @@
 				<img class="aproachShip" src="images/ship.png">
 			</div>
 		</div>
-		<div id="content" class="hidden container margin-top-50">
+		<div id="content" class="hidden container margin-top-20 content">
+			<div class="centered gameStatus" id="gameStatus">
+				<p id="gameStatusP"></p>
+			</div>
 			<div class="centered">
 				<a href="games.html" class="generalButton">
 					<button class="backButton"><i class="fas fa-chevron-left"></i> BACK</button>
 				</a>
 			</div>
-			<p class="centered" id="User1">Hello,  </p>
-			<p class="centered" id="User2"> </p>
+
+			<div class="centered">
+				<p class="centered" id="User1">Hello,  </p><img class="wavingHand" src="images/waving-hand.png">
+			</div>
+			<div class="centered" id="User2"> </div>
+
+			<p class="centered hidden instructions" id="Waiting"> Waiting an opponent</p>
+			<div class="spinner hidden" id="waitingOpponent">
+				<div class="bounce1"></div>
+				<div class="bounce2"></div>
+				<div class="bounce3"></div>
+			</div>
+			<p class="centered hidden instructions" id="instructionsPlaceShips"> Place your ships</p>
+			<p class="centered hidden instructions" id="yourOpponentShip"> Waiting for your opponent's ships</p>
+			<p class="centered hidden instructions" id="instructionsWaitingShips"> Waiting for your opponent's ships</p>
+			<p class="centered hidden instructions" id="instructionsWaitingTurn"> Waiting turn</p>
+			<p class="centered hidden instructions" id="instructionsYourTurn"> Your turn</p>
+			<div class="hidden" id="winner">
+				<img class="centered icon" src="images/winner.png">
+				<p class="centered">YOU WIN!</p>
+			</div>
+			<div class="hidden" id="looser">
+				<img class="centered icon" src="images/looser.png">
+				<p class="centered">OOOPS!...YOU LOOSE!</p>
+			</div>
+
 			<div class="row">
-				<div class="col-6">
+				<div class="col-md-12 col-lg-6" id="table1">
 					<h2 id="titleYourShips">YOUR SHIPS</h2>
 					<table class="gameTable" id="userTable">
 					</table>
@@ -73,7 +100,7 @@
 						<button id="sendShipsButton">Send Ships</button>
 					</div>
 				</div>
-				<div class="col-6">
+				<div class="col-md-12 col-lg-6" id="table2">
 					<h2 id="titleYourSalvoes">YOUR SALVOES</h2>
 					<table class="gameTable salvoesTable" id="salvoTable">
 					</table>

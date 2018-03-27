@@ -1,5 +1,10 @@
 body {
 	font-family: 'Quicksand', sans-serif;
+	min-height: 100vh;
+}
+
+.content{
+	min-height: 100vh;
 }
 
 h1 {
@@ -38,7 +43,7 @@ table {
 
 button {
 	width: 60px;
-	text-decoration: none;
+	/* text-decoration: none; */
 }
 
 /******LoadingSpace******/
@@ -163,7 +168,7 @@ input:-webkit-autofill {
 	-webkit-animation-name: animatetop;
 	-webkit-animation-duration: 0.4s;
 	animation-name: animatetop;
-	animation-duration: 0.4s
+	animation-duration: 0.4s;
 }
 
 /* Add Animation for Modal*/
@@ -202,12 +207,33 @@ input:-webkit-autofill {
 	padding: 20px 10px 5px 10px;
 }
 
+.modal-body label {
+	padding: 0 10px 0 0; 
+}
+
 .modal-footer {
 	padding: 2px 16px;
 	background-color: #5cb85c;
 	color: white;
 }
 
+input {
+	border-radius: 5px;
+	width: 150px;
+	height: 15px;
+}
+
+.spaceLogin {
+	margin-bottom: 20px; 
+}
+.loginSpace label{
+	padding: 0 10px 0 0;
+
+}
+
+.leaderboardSpace{
+	margin-top: 30px;
+}
 /******Games Table******/
 .gamesTable table{
 	width: 700px;
@@ -275,26 +301,33 @@ input:-webkit-autofill {
 .gameTable {
 	margin: auto;
 	margin-bottom: 30px;
+	/* table-layout:fixed; */
 }
 
 .gameTable tr {
-	border: 1px solid #999999;
+	/* border: 1px solid #999999; */
 	text-align: center;
 }
 
 .gameTable th {
 	background-color: #001a33;
-	height: 41px;
-	width: 41px;
+	
+	height: 48px;
+	width: 48px;
+	
 	border: 1px solid #999999;
 	text-align: center;
 	color: #d9d9d9;
 }
 
 .gameTable td {
+	overflow: hidden;
 	background-color: #003366;
+	/*
 	width: 48px;
-	border: 1px solid #999999;
+	height: 48px;
+*/
+	border: 1px solid #00264d;
 	padding: 0 !important;
 	text-align: center;
 	color: #d9d9d9;
@@ -321,22 +354,29 @@ input:-webkit-autofill {
 }
 
 .salvoes div{
-	background-color: #e6e6ff;
+	background-image: url("../images/waves.png");
+	background-size: contain;
+	background-color: transparent;
 	width: 30px;
 	height: 30px;
 	margin: auto;
 	border-radius: 50px;
 }
 
-.hittedShip div{
-	background-color: #990000;
+.hitShip div{
+	/*	background-color: #990000;*/
 	width: 30px;
 	height: 30px;
 	margin: auto;
 	border-radius: 50px;
+	background-image: url("../images/fire.png");
+	background-size: contain;
+	background-color: transparent;
+	/*	background-image: url("paper.gif");*/
 }
 
-.hittedShip div p{
+
+.hitShip div p{
 	color: white;
 	padding-top: 5px;
 }
@@ -402,7 +442,8 @@ input:-webkit-autofill {
 }
 
 .shotPendant{
-	background-image: url(../images/bullseye.svg);
+	background-image: url(../images/bullseye.png);
+/*	background-image: url(../images/bullseye.svg);*/
 	background-repeat: no-repeat;
 	background-position: center;
 	background-size: contain;
@@ -416,14 +457,94 @@ input:-webkit-autofill {
 	margin-bottom: 100px;
 }
 
+.margin-bottom-50{
+	margin-bottom: 50px;
+}
+
 .margin-top-50{
 	margin-top: 50px;
 }
 
-.sunkShip{
+.margin-top-20{
+	margin-top: 20px;
+}
+
+.sunkShip {
 	background-color: black !important;
 }
 
 .red{
 	color: red;
+}
+
+/*WAITING OPPONENT*/
+.spinner {
+	margin: 0 auto 0; 
+	width: 70px;
+	text-align: center;
+}
+
+.spinner > div {
+	width: 5px;
+	height: 5px;
+	background-color: dimgrey;
+
+	border-radius: 100%;
+	display: inline-block;
+	-webkit-animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+	animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+}
+
+.spinner .bounce1 {
+	-webkit-animation-delay: -0.32s;
+	animation-delay: -0.32s;
+}
+
+.spinner .bounce2 {
+	-webkit-animation-delay: -0.16s;
+	animation-delay: -0.16s;
+}
+
+@-webkit-keyframes sk-bouncedelay {
+	0%, 80%, 100% { -webkit-transform: scale(0) }
+	40% { -webkit-transform: scale(1.0) }
+}
+
+@keyframes sk-bouncedelay {
+	0%, 80%, 100% { 
+		-webkit-transform: scale(0);
+		transform: scale(0);
+	} 40% { 
+		-webkit-transform: scale(1.0);
+		transform: scale(1.0);
+	}
+}
+
+.waiting{
+	color: dimgrey;
+}
+
+.gameStatus p {
+	color: mediumvioletred;
+}
+
+.icon{
+	margin: auto;
+	/*	text-align: center;*/
+	width: 100px;
+}
+
+.wavingHand{
+	margin-left: 10;
+	height: 25px;
+	/* width: 30px; */
+}
+
+.instructions{
+	font-weight: bold;
+	color: dimgrey;
+}
+
+.lowOpacity{
+	opacity: 0.6;
 }

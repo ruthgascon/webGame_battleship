@@ -14,16 +14,16 @@
 	<body>
 		<h1>SALVO!</h1>
 		<div id='loadingmessage' class="container-fluid loadingSpace">
-				<div class="centeredContent">
-					<p>loading data...</p>
-					<img class="aproachShip" src="images/ship.png">
-				</div>
+			<div class="centeredContent">
+				<p>loading data...</p>
+				<img class="aproachShip" src="images/ship.png">
+			</div>
 		</div>
 		<div id ="content" class="container-fluid hidden">
 			<div class="row">
 				<div align="center">
 					<div class="spaceLogin">
-						<form id="login-form" onsubmit="return false" class="hidden">
+						<form id="login-form" onsubmit="return false" class="hidden loginSpace">
 							<label>Mail: <input type="text" name="username" id="username"></label>
 							<label>Password: <input type="password" id="passwordLogin"></label>
 							<span id="showPasswordLogin">
@@ -44,16 +44,17 @@
 					</div>
 				</div>
 			</div>
-
-			<h2>Leaderboard</h2>
-			<div>
-				<div class="centered leaderboardTable"  id="leaderboardTable">
+			<div class="leaderboardSpace">
+				<h2>Leaderboard</h2>
+				<div>
+					<div class="centered leaderboardTable"  id="leaderboardTable">
+					</div>
 				</div>
-			</div>
-			<div id="playButton" class="hidden">
-				<a href="games.html" class="centered generalButton">
-					<button>Play</button>
-				</a>
+				<div id="playButton" class="hidden">
+					<a href="games.html" class="centered generalButton">
+						<button>Play</button>
+					</a>
+				</div>
 			</div>
 		</div>
 
@@ -73,7 +74,7 @@
 							<i id="eyeCloseSignUp" class="fas fa-eye-slash hidden"></i>
 						</span>
 					</form>
-					<div class="centered margin-bottom-100 margin-top-50">
+					<div class="centered margin-bottom-50 margin-top-50 generalButton">
 						<button id="signUpform">Sign Up</button>
 					</div>
 				</div>

@@ -1,4 +1,5 @@
 $(document).ready(function() {
+	var info;
 
 	function getParameterByName(name, url) {
 		if (!url) url = window.location.href;
@@ -11,202 +12,254 @@ $(document).ready(function() {
 	}
 
 	var gamePlayerID = getParameterByName("gp");
-	callAjax();
+	var firstCall = true;
+	callAjax(firstCall);
 
-	function callAjax(){
+	setInterval(callAjax, 1000);
+
+	function callAjax(firstCall){
 		$.ajax({
 			url: "http://localhost:8080/api/game_view/" + gamePlayerID,
 			context: document.body
 		}).done(function(data) {
-			createTable (10, document.getElementById("userTable"), "userCell");
-			createTable (10, document.getElementById("salvoTable"), "salvoesCell");
-			getShips();
-			getGamePlayersInfo();
-			getSalvoes();
-			hideloading();
-			$('#backButton').on("click", goBack);
-
-			function goBack() {
-				window.location.replace("games.html");
+			if (firstCall){
+				hideloading(data);
+				createTable (data, 10, document.getElementById("userTable"), "userCell");
+				createTable (data, 10, document.getElementById("salvoTable"), "salvoesCell");
+				getShips(data);
+				getGamePlayersInfo(data);
+				getSalvoes(data);
 			}
-
-			function createTable (cells, table, cellsName){
-
-				var numberOfCells = cells;
-				var newLetter;
-				for (var i = 0; i<numberOfCells+1; i++){
-					if (i==0){
-						var head = document.createElement ('thead')
-						var row = document.createElement('tr');
-						for (var x=0; x<numberOfCells+1; x++){
-							var column = document.createElement('th');
-							if (x!=0){
-								column.append(x);
-							}
-							row.appendChild(column);
-							head.appendChild(row);
-							table.appendChild(head);
-						}
-					} else {
-						if (i==1){
-							var tbody = document.createElement ('tbody');
-							newLetter = "A";
-							table.appendChild(tbody);
-						}
-						var row = document.createElement('tr');
-						tbody.appendChild(row);
-						for (var x=0; x<numberOfCells; x++){
-							if (x==0){
-								var column1 = document.createElement('th');
-								column1.append (newLetter);
-								row.appendChild (column1);
-							}
-							var columns = document.createElement('td');
-							var numberOfCell = x+1
-							columns.setAttribute(cellsName, newLetter+numberOfCell);
-							if (cellsName == "userCell"){
-								columns.setAttribute("ondrop", "drop(event)");
-								columns.setAttribute("ondragover", "allowDrop(event)");
-							}						
-							row.appendChild (columns);
-						}
-						nextLetter = String.fromCharCode(newLetter.charCodeAt(0)+1);
-						newLetter = nextLetter;
-					} 
-				}
-			}
-
-			function getShips(){
-				var shipsInfo = data.Ships;
-				if (shipsInfo.length==0){
-					$("#addShips").removeClass("hidden");
-				} else {
-					for (var y=0; y<shipsInfo.length; y++){
-						var oneShipInfo = shipsInfo[y];
-						var oneShipLocations = oneShipInfo.Locations;
-						for (var x = 0; x<oneShipLocations.length; x++){
-							var thisClass = "colored"+(oneShipInfo.Type.split(" ", 1));
-							var location = oneShipLocations[x];
-							$("[usercell="+location+"]").addClass(thisClass);
-							$("[usercell="+location+"]").addClass("locatedShip");
-							$('#sendSalvosButtonSpace').removeClass("hidden");
-						}
-					}
-				}
-			}
-
-			function getGamePlayersInfo () {
-				var gamePlayers = data["Game Players"];
-				for (var x in gamePlayers){
-					if(gamePlayers.length <2) {
-						$("#User2").append("waiting your opponent");
-					};
-					var userID = gamePlayers[x]["Game Player ID"];
-					if (userID == gamePlayerID){
-						var myMail = gamePlayers[x].Player.Email;
-						$("#User1").append(myMail);
-					} else {
-						var opponentMail = gamePlayers[x].Player.Email;
-						$("#User2").append("Your opponent mail: "+opponentMail);
-					}
-				}
-			}
-
-			function getSalvoes(){
-				var Salvoes = data.Salvoes;
-				var Hits = data["Your ships hitted"];
-				for (var i in Salvoes){
-					if (Salvoes[i].GamePlayer == gamePlayerID){
-						printSalvos (Salvoes[i].Salvoes, "salvoesCell", Hits);
-					} else {
-						printSalvos (Salvoes[i].Salvoes, "userCell");
-					}
-				}
-			}
-
-			function printSalvos (whomSalvos, where, hits) {
-				var cellsLong;
-				var salvos = whomSalvos;
-				//FUNCTION TO SORT THE SALVOS BY TURN
-				function compare(a,b) {
-					if (a.turnNumber < b.turnNumber)
-						return -1;
-					if (a.turnNumber > b.turnNumber)
-						return 1;
-					return 0;
-				}
-				salvos.sort(compare);
-				//CHECK THE TURN AND PRINT THE SHIPS
-				for (var y in salvos){
-					var turn = salvos[y].Turn;
-					var salvoLocArray = salvos[y].Locations;
-					for (var x=0; x<salvoLocArray.length; x++){
-						var salvoLoc = salvoLocArray[x];
-						var newFigure = document.createElement("div");
-						if (where=="userCell"){
-							if ($("["+where+"="+salvoLoc+"]").hasClass("locatedShip")){
-								$("["+where+"="+salvoLoc+"]").removeClass("salvoes");
-								$("["+where+"="+salvoLoc+"]").addClass("hittedShip");
-								var turnText = document.createElement ('p');
-								turnText.append(turn);
-								newFigure.append(turnText);
-							} 
-						}
-						$("["+where+"="+salvoLoc+"]").append(newFigure);
-						$("["+where+"="+salvoLoc+"]").addClass("salvoes");
-					}
-				}
-
-				for (var i in hits){
-					//					console.log (hits[i]);
-					var everyShip = {name, length};
-					var turn = hits[i].Turn;
-					//					console.log (turn);
-					var kindOfShip = hits[i].TypeOfShip;
-					calculateLongOfShip (kindOfShip);
-					var cell = hits[i].Cell;
-					//					console.log ("the cell", cell);
-					$("["+where+"="+cell+"]").addClass("hittedShip");
-					$("["+where+"="+cell+"]").attr("data-type", kindOfShip);
-					var turnText = document.createElement ('p');
-					turnText.append(turn);
-					var child = $("["+where+"="+cell+"]").children("div");
-					child.append(turnText);
-
-				}
-
-				checkSunk(hits);
-
-				function checkSunk(hits){
-					for (var i in hits){
-						if (hits[i].Sunk){
-							$("[data-type='"+hits[i].TypeOfShip+"']").addClass("sunkShip")
-						}
-
-					}
-				}
-
-				function calculateLongOfShip (kindOfShip){
-					if (kindOfShip == "Destroyer"){
-						cellsLong = 3;
-					} else if(kindOfShip == "Submarine"){
-						cellsLong = 3;
-					} else if (kindOfShip == "Carrier"){
-						cellsLong = 5;
-					} else if (kindOfShip == "Battleship"){
-						cellsLong = 4;
-					} else if (kindOfShip == "Patrol Boat"){
-						cellsLong = 2;
-					}
-				}
-
-			}
-
-			function hideloading (){
-				$('#content').removeClass("hidden");
-				$('#loadingmessage').addClass("hidden");
-			};
+			info = data;
+			gameStatus(data);
 		});
+	}
+
+	$('#backButton').on("click", goBack);
+
+	function goBack() {
+		window.location.replace("games.html");
+	}
+
+	function calculateLongOfShip (kindOfShip){
+		if (kindOfShip == "Destroyer"){
+			cellsLong = 3;
+		} else if(kindOfShip == "Submarine"){
+			cellsLong = 3;
+		} else if (kindOfShip == "Carrier"){
+			cellsLong = 5;
+		} else if (kindOfShip == "Battleship"){
+			cellsLong = 4;
+		} else if (kindOfShip == "Patrol Boat"){
+			cellsLong = 2;
+		}
+	}
+
+	function hideloading (){
+		$('#content').removeClass("hidden");
+		$('#loadingmessage').addClass("hidden");
+	};
+
+	function createTable (data, cells, table, cellsName){
+		var numberOfCells = cells;
+		var newLetter;
+		for (var i = 0; i<numberOfCells+1; i++){
+			if (i==0){
+				var head = document.createElement ('thead')
+				var row = document.createElement('tr');
+				for (var x=0; x<numberOfCells+1; x++){
+					var column = document.createElement('th');
+					if (x!=0){
+						column.append(x);
+					}
+					row.appendChild(column);
+					head.appendChild(row);
+					table.appendChild(head);
+				}
+			} else {
+				if (i==1){
+					var tbody = document.createElement ('tbody');
+					newLetter = "A";
+					table.appendChild(tbody);
+				}
+				var row = document.createElement('tr');
+				tbody.appendChild(row);
+				for (var x=0; x<numberOfCells; x++){
+					if (x==0){
+						var column1 = document.createElement('th');
+						column1.append (newLetter);
+						row.appendChild (column1);
+					}
+					var columns = document.createElement('td');
+					var numberOfCell = x+1
+					columns.setAttribute(cellsName, newLetter+numberOfCell);
+					if (cellsName == "userCell"){
+						columns.setAttribute("ondrop", "drop(event)");
+						columns.setAttribute("ondragover", "allowDrop(event)");
+					}						
+					row.appendChild (columns);
+				}
+				nextLetter = String.fromCharCode(newLetter.charCodeAt(0)+1);
+				newLetter = nextLetter;
+			} 
+		}
+	}
+
+	function getShips(data){
+		var shipsInfo = data.Ships;
+		if (shipsInfo.length==0){
+			$("#addShips").removeClass("hidden");
+		} else {
+			for (var y=0; y<shipsInfo.length; y++){
+				var oneShipInfo = shipsInfo[y];
+				var oneShipLocations = oneShipInfo.Locations;
+				for (var x = 0; x<oneShipLocations.length; x++){
+					var thisClass = "colored"+(oneShipInfo.Type.split(" ", 1));
+					var location = oneShipLocations[x];
+					$("[usercell="+location+"]").addClass(thisClass);
+					$("[usercell="+location+"]").addClass("locatedShip");
+					//					$('#sendSalvosButtonSpace').removeClass("hidden");
+				}
+			}
+		}
+	}
+
+	function getGamePlayersInfo (data) {
+		var gamePlayers = data["Game Players"];
+		for (var x in gamePlayers){
+			//			if(gamePlayers.length <2) {
+			//				
+			//			};
+			var userID = gamePlayers[x]["Game Player ID"];
+			if (userID == gamePlayerID){
+				var myMail = gamePlayers[x].Player.Email;
+				$("#User1").append(myMail);
+			} else {
+				var opponentMail = gamePlayers[x].Player.Email;
+				//				$("#User2").append("Your opponent mail: "+opponentMail);
+			}
+		}
+	}
+
+	function getSalvoes(data){
+		var Salvoes = data.Salvoes;
+
+		for (var i in Salvoes){
+			if (Salvoes[i].GamePlayer == gamePlayerID){
+				var hits = data["Hits You Did"];
+				printSalvos (data, Salvoes[i].Salvoes, "salvoesCell", hits);
+			} else {
+				var hits = data["Your ships hit"];
+				printSalvos (data, Salvoes[i].Salvoes, "userCell", hits);
+			}
+		}
+	}
+
+	function printSalvos (data, whomSalvos, where, hits) {
+		var cellsLong;
+		var salvos = whomSalvos;
+		function compare(a,b) {
+			if (a.turnNumber < b.turnNumber)
+				return -1;
+			if (a.turnNumber > b.turnNumber)
+				return 1;
+			return 0;
+		}
+		salvos.sort(compare);
+		for (var y in salvos){
+			var turn = salvos[y].Turn;
+			var salvoLocArray = salvos[y].Locations;
+			for (var x=0; x<salvoLocArray.length; x++){
+				var salvoLoc = salvoLocArray[x];
+				var newFigure = document.createElement("div");
+				$("["+where+"="+salvoLoc+"]").append(newFigure);
+				$("["+where+"="+salvoLoc+"]").addClass("salvoes");
+			}
+		}
+		//		var hitsReady = false;
+		//		console.log("in print salvos", hits.length);
+		if (hits){
+			if (hits.length > 0){
+				printHits(data, where, hits);
+				checkSunk(where, data);
+
+			}
+		}
+
+		//		if (hitsReady){
+
+		//		}
+	};
+
+	function printHits(data, where, hits){
+		console.log("printHits", hits.length);
+
+		console.log ("printhits", where);
+
+		for (var i in hits){
+			//			var turn = hits[i].Turn;
+			var kindOfShip = hits[i].TypeOfShip;
+			calculateLongOfShip (kindOfShip);
+			var cell = hits[i].Cell;
+			var locatedCell = $("["+where+"="+cell+"]");
+			locatedCell.addClass("hitShip");
+			locatedCell.removeClass("salvoes");
+			//			locatedCell.classList.remove("salvoes");
+			locatedCell.attr("data-name", kindOfShip);
+			//			var turnText = document.createElement ('p');
+			//			turnText.append(turn);
+			var child = locatedCell.children("div");
+			console.log("1");
+			//			if (i == hits.length-1){
+			//				hitsReady = true;
+			//				console.log("for finished");
+			//			}
+		}
+
+		//		if (hitsReady){
+		//			console.log("STARTING");
+		//			//			if (where == "userCell"){
+		//			//				var hits = data["Hits You Did"];
+		//			//				table = "salvoTable";
+		//
+		//			//				console.log("2 Hits You Did");
+		//			//			} else {
+		//			//				console.log("2 Your ships hit");
+		//			//				var hits = data["Your ships hit"];
+		//			//				table = "userTable";
+		//			//				checkSunk(where, hits);
+		//			//			}
+		//		}
+	}
+
+	function checkSunk(where, data){
+		if (where == "salvoesCell"){
+			console.log ("where", where);
+			var hits = data["Hits You Did"];
+			table = "salvoTable";
+			//				checkSunk(where, hits);
+			console.log("2 Hits You Did");
+		} else {
+			console.log ("where", where);
+			console.log("2 Your ships hit");
+			var hits = data["Your ships hit"];
+			table = "userTable";
+			//				checkSunk(where, hits);
+		}
+		console.log ("****");
+		for (var i in hits){
+			if (hits[i].Sunk){
+				var kindOfShip = hits[i]["TypeOfShip"];
+				console.log ("I know the table: ", table);
+				console.log ("I know the kind os ship: ", kindOfShip);
+				var cells = document.querySelectorAll("#"+table+" td[data-name='"+kindOfShip+"']");
+				console.log ("but i can't search the cells", cells);
+				for (var j=0; j<cells.length; j++ ){
+					console.log ("IT'S SUNK");
+					cells[j].classList.add("sunkShip");
+				}
+			}
+		}
 	}
 
 	$('#addShips').on("click", function(){
@@ -267,6 +320,64 @@ $(document).ready(function() {
 		})
 	}
 
+	function showOpponent(){
+		$("#User2").removeClass("hidden");
+		if($('#opponentMail').length == 0) {
+			for (var x in info["Game Players"]){
+				var userID = info["Game Players"][x]["Game Player ID"];
+				if (userID != gamePlayerID){
+					var opponentMail = info["Game Players"][x].Player.Email;
+					$("#User2").append("<p id='opponentMail'>Your opponent mail: " + opponentMail+"</p>");
+				}
+			}
+		}
+	}
+
+	function gameStatus(data){
+		var state = data["Game State"];
+		if (state == "WAITING_OPPONENT"){
+			$("#waitingOpponent").removeClass("hidden");
+			$("#Waiting").removeClass("hidden");
+		} else if (state == "WAITING_YOUR_SHIPS"){
+			$("#instructionsPlaceShips").removeClass("hidden");
+			$("#waitingOpponent").addClass("hidden");
+			$("#Waiting").addClass("hidden");
+			showOpponent();
+		} else if (state == "WAITING_OPPONENT_SHIPS"){
+			showOpponent();
+			$("#waitingOpponent").addClass("hidden");
+			$("#Waiting").addClass("hidden");
+			$("#instructionsWaitingShips").removeClass("hidden");
+		} else if (state=="YOUR_TURN"){
+			$("#Waiting").addClass("hidden");
+			$("#instructionsWaitingShips").addClass("hidden");
+			$('#instructionsYourTurn').removeClass("hidden");
+			$('#sendSalvosButton').removeClass("hidden");
+			$('#sendSalvosButtonSpace').removeClass("hidden");
+			showOpponent();
+		} else if (state=="WAITING_TURN"){
+			
+			$('#instructionsYourTurn').addClass("hidden");
+			$("#instructionsWaitingTurn").removeClass("hidden");
+			showOpponent();
+		} else if (state=="YOU_WIN"){
+			$('#instructionsYourTurn').addClass("hidden");
+			$("#instructionsWaitingTurn").addClass("hidden");
+			$('#winner').removeClass("hidden");
+			$('#table1').addClass("lowOpacity");
+			$('#table2').addClass("lowOpacity");
+			
+			showOpponent();
+		} else if (state=="YOU_LOOSE"){
+			$('#instructionsYourTurn').addClass("hidden");
+			$("#instructionsWaitingTurn").addClass("hidden");
+			$('#looser').removeClass("hidden");
+			$('#table1').addClass("lowOpacity");
+			$('#table2').addClass("lowOpacity");
+			showOpponent();
+		}
+	}
+
 	///SEND SALVOS
 
 	var salvoesCells = document.querySelector(".salvoesTable");
@@ -287,9 +398,9 @@ $(document).ready(function() {
 				if(cell.tagName=="DIV"){
 					cell = cell.parentElement;
 				}
-				if (cell.classList.contains("salvoes") || cell.classList.contains("hittedShip")){
+				if (cell.classList.contains("salvoes") || cell.classList.contains("hitShip")){
 					alert ("you have already shot here");
-				} else if (cell.tagName =="TD"){
+				} else if (cell.tagName =="TD" && $('#sendSalvosButtonSpace').hasClass("hidden") == false){
 					cell.classList.add("shotPendant");
 					cell.setAttribute("data-shooted", "yes");
 				}

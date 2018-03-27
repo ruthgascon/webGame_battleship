@@ -231,7 +231,7 @@ public class SalvoController {
         }
         if (opponent != null){
             dto.put("Hits You Did", checkHits(gamePlayer, opponent));
-            dto.put ("Your ships hitted", checkHits(opponent, gamePlayer));
+            dto.put ("Your ships hit", checkHits(opponent, gamePlayer));
         }
         dto.put ("Ships alive", checkShipsAlive(gamePlayer, game.getGamePlayers()));
         dto.put("Game State", checkGameState(gamePlayer));

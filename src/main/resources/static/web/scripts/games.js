@@ -4,13 +4,19 @@ $( document ).ready(function() {
 	var gameTableSpace = $('#GamesTable');
 	var generalData;
 
-	$.ajax( "/api/games" )
-		.done(function(data) {
-		generalData = data;
-		var games = data.Games;
-		printTableGame(games, gameTableSpace);
-		hideloading();
-	});
+	//	setInterval(callAjax, 1000);
+
+	callAjax();
+
+	function callAjax() {
+		$.ajax( "/api/games" )
+			.done(function(data) {
+			generalData = data;
+			var games = data.Games;
+			printTableGame(games, gameTableSpace);
+			hideloading();
+		});
+	}
 
 	$('#newGameButton').click (function(event){
 		event.preventDefault();
@@ -69,7 +75,7 @@ $( document ).ready(function() {
 				} else {
 					var mail = eachGamePlayer.Email;
 				}
-			
+
 				var td = document.createElement('td');
 				var text = document.createTextNode(mail);
 				td.appendChild (text);
@@ -89,7 +95,7 @@ $( document ).ready(function() {
 						a.setAttribute("class", "joinButton");
 					}
 					row.append(tdEmpty);
-						
+
 				}
 			}
 			var td = document.createElement('td');
@@ -104,7 +110,7 @@ $( document ).ready(function() {
 				a.appendChild(icon);
 				a.title = "game";
 				a.href = "game.html?gp="+GPID;
-				
+
 				td.appendChild (a);
 			} else {
 				icon.classList.add("fas","fa-times");
