@@ -176,25 +176,15 @@ $(document).ready(function() {
 				$("["+where+"="+salvoLoc+"]").addClass("salvoes");
 			}
 		}
-		//		var hitsReady = false;
-		//		console.log("in print salvos", hits.length);
 		if (hits){
 			if (hits.length > 0){
 				printHits(data, where, hits);
 				checkSunk(where, data);
-
 			}
 		}
-
-		//		if (hitsReady){
-
-		//		}
 	};
 
 	function printHits(data, where, hits){
-		console.log("printHits", hits.length);
-
-		console.log ("printhits", where);
 
 		for (var i in hits){
 			//			var turn = hits[i].Turn;
@@ -204,58 +194,26 @@ $(document).ready(function() {
 			var locatedCell = $("["+where+"="+cell+"]");
 			locatedCell.addClass("hitShip");
 			locatedCell.removeClass("salvoes");
-			//			locatedCell.classList.remove("salvoes");
 			locatedCell.attr("data-name", kindOfShip);
 			//			var turnText = document.createElement ('p');
 			//			turnText.append(turn);
 			var child = locatedCell.children("div");
-			console.log("1");
-			//			if (i == hits.length-1){
-			//				hitsReady = true;
-			//				console.log("for finished");
-			//			}
 		}
-
-		//		if (hitsReady){
-		//			console.log("STARTING");
-		//			//			if (where == "userCell"){
-		//			//				var hits = data["Hits You Did"];
-		//			//				table = "salvoTable";
-		//
-		//			//				console.log("2 Hits You Did");
-		//			//			} else {
-		//			//				console.log("2 Your ships hit");
-		//			//				var hits = data["Your ships hit"];
-		//			//				table = "userTable";
-		//			//				checkSunk(where, hits);
-		//			//			}
-		//		}
 	}
 
 	function checkSunk(where, data){
 		if (where == "salvoesCell"){
-			console.log ("where", where);
 			var hits = data["Hits You Did"];
 			table = "salvoTable";
-			//				checkSunk(where, hits);
-			console.log("2 Hits You Did");
 		} else {
-			console.log ("where", where);
-			console.log("2 Your ships hit");
 			var hits = data["Your ships hit"];
 			table = "userTable";
-			//				checkSunk(where, hits);
 		}
-		console.log ("****");
 		for (var i in hits){
 			if (hits[i].Sunk){
 				var kindOfShip = hits[i]["TypeOfShip"];
-				console.log ("I know the table: ", table);
-				console.log ("I know the kind os ship: ", kindOfShip);
 				var cells = document.querySelectorAll("#"+table+" td[data-name='"+kindOfShip+"']");
-				console.log ("but i can't search the cells", cells);
 				for (var j=0; j<cells.length; j++ ){
-					console.log ("IT'S SUNK");
 					cells[j].classList.add("sunkShip");
 				}
 			}
@@ -327,7 +285,7 @@ $(document).ready(function() {
 				var userID = info["Game Players"][x]["Game Player ID"];
 				if (userID != gamePlayerID){
 					var opponentMail = info["Game Players"][x].Player.Email;
-					$("#User2").append("<p id='opponentMail'>Your opponent mail: " + opponentMail+"</p>");
+					$("#User2").append("<p id='opponentMail'>Opponent: " + opponentMail+"</p>");
 				}
 			}
 		}
@@ -335,43 +293,60 @@ $(document).ready(function() {
 
 	function gameStatus(data){
 		var state = data["Game State"];
+		console.log (state);
 		if (state == "WAITING_OPPONENT"){
+			$('#instructions').removeClass("hidden");
+			if ($('#instructionsP').length == 0){
+				$('#instructions').append("<p id='instructionsP'>Waiting an opponent</p>");
+			}
 			$("#waitingOpponent").removeClass("hidden");
 			$("#Waiting").removeClass("hidden");
 		} else if (state == "WAITING_YOUR_SHIPS"){
-			$("#instructionsPlaceShips").removeClass("hidden");
+			$('#instructions').removeClass("hidden");
+			if ($('#instructionsP').length == 0){
+				$('#instructions').append("<p id='instructionsP'>Place your ships</p>");
+			} else if ($('#instructionsP').length == 1){
+				$('#instructionsP').remove();
+				$('#instructions').append("<p id='instructionsP'>Place your ships</p>");
+			}
 			$("#waitingOpponent").addClass("hidden");
 			$("#Waiting").addClass("hidden");
 			showOpponent();
 		} else if (state == "WAITING_OPPONENT_SHIPS"){
-			showOpponent();
 			$("#waitingOpponent").addClass("hidden");
 			$("#Waiting").addClass("hidden");
-			$("#instructionsWaitingShips").removeClass("hidden");
+			$('#instructions').removeClass("hidden");
+			$('#instructions').text("Waiting opponent's ships");
+			showOpponent();
 		} else if (state=="YOUR_TURN"){
+			$("#waitingOpponent").addClass("hidden");
 			$("#Waiting").addClass("hidden");
-			$("#instructionsWaitingShips").addClass("hidden");
-			$('#instructionsYourTurn').removeClass("hidden");
+			$('#instructions').removeClass("hidden");
+			$('#instructions').text("Your turn");
+			showOpponent();
 			$('#sendSalvosButton').removeClass("hidden");
 			$('#sendSalvosButtonSpace').removeClass("hidden");
-			showOpponent();
 		} else if (state=="WAITING_TURN"){
-			
-			$('#instructionsYourTurn').addClass("hidden");
-			$("#instructionsWaitingTurn").removeClass("hidden");
+			$("#waitingOpponent").addClass("hidden");
+			$("#Waiting").addClass("hidden");
+			$('#instructions').removeClass("hidden");
+			$('#instructions').text("Waiting turn");
 			showOpponent();
 		} else if (state=="YOU_WIN"){
-			$('#instructionsYourTurn').addClass("hidden");
-			$("#instructionsWaitingTurn").addClass("hidden");
+			$('#instructions').remove();
 			$('#winner').removeClass("hidden");
 			$('#table1').addClass("lowOpacity");
 			$('#table2').addClass("lowOpacity");
-			
 			showOpponent();
 		} else if (state=="YOU_LOOSE"){
-			$('#instructionsYourTurn').addClass("hidden");
-			$("#instructionsWaitingTurn").addClass("hidden");
+			$('#instructions').remove();
 			$('#looser').removeClass("hidden");
+			$('#table1').addClass("lowOpacity");
+			$('#table2').addClass("lowOpacity");
+			showOpponent();
+		} else if (state =="TIE"){
+			$('#instructions').remove();
+			$('#tier').removeClass("hidden");
 			$('#table1').addClass("lowOpacity");
 			$('#table2').addClass("lowOpacity");
 			showOpponent();

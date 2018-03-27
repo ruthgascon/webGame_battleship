@@ -1,15 +1,20 @@
 $( document ).ready(function() {
+	var modalOpen;
 	var loggedInPlayerInfo;
 	checkLoggedIn ();
+	callAjax ();
 
 	//get data for leaderboard
-	$.ajax( "/api/leaderboard")
-		.done(function(data) {
-		var tableSpace = $('#leaderboardTable');
-		var leaderboardData = data;
-		printleaderBoard(tableSpace, leaderboardData);
-		hideloading();
-	});
+	function callAjax (){
+		$.ajax( "/api/leaderboard")
+			.done(function(data) {
+			var tableSpace = $('#leaderboardTable');
+			var leaderboardData = data;
+			printleaderBoard(tableSpace, leaderboardData);
+			hideloading();
+		});
+	}
+
 
 	$('#loginbutton').click(function(event){
 		login (event);
@@ -17,9 +22,14 @@ $( document ).ready(function() {
 
 	$(document).keypress(function(e) {
 		if(e.which == 13) {
-			login (event);
+			if (modalOpen == true){
+				postSignUpAjax(event);
+			}else {
+				login (event);
+			}
 		}
 	});
+
 
 	$('#signUpform').click(function (event) {
 		postSignUpAjax(event);
@@ -40,11 +50,13 @@ $( document ).ready(function() {
 
 	$("#signUp").click(function() {
 		openNewWindow();
+		modalOpen = true;
 	});
 
 	$('#closeButton').click (function(event) {
 		var modal = document.getElementById('myModal');
 		modal.style.display = "none";
+		modalOpen = false;
 	});
 
 	// When the user clicks anywhere outside of the modal, close it
@@ -72,6 +84,7 @@ $( document ).ready(function() {
 	};
 
 	function printleaderBoard(tableSpace, leaderboardData){
+		$(tableSpace).text("");
 		//create the header of the table
 		var table = document.createElement ('table');
 		tableSpace.append(table);
@@ -195,6 +208,7 @@ $( document ).ready(function() {
 		}).done(function(data, textStatus, jqXHR) {
 			checkLoggedIn ();
 			$('#username, #passwordLogin').val('');
+			callAjax ();
 		}).fail(function(jqXHR, textStatus, errorThrown) {
 			if (usernameInput.length === 0 || passwordInput.length === 0){
 				alert("Try entering an email and a password");

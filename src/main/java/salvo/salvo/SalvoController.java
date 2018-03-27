@@ -335,13 +335,14 @@ public class SalvoController {
                     if ((checkShipsAlive(opponent, game.getGamePlayers())).size() == 0 && (checkShipsAlive(gamePlayer, game.getGamePlayers())).size() == 0) {
                         state = GameState.TIE;
                         Set <Score> Scores = gamePlayer.getGame().getScores();
-                        if (Scores.size() > 0){
+                        System.out.println(Scores.size());
+                        if (Scores.size() == 0){
                             Score gamePlayerScore = new Score(gamePlayer.getPlayer(), game, 0.50);
                             scoreRepository.save(gamePlayerScore);
                         } else if (Scores.size() == 1) {
                             for (Score s : Scores){
                                 if (s.getPlayer().getId() != gamePlayer.getPlayer().getId()){
-                                    Score gamePlayerScore = new Score(gamePlayer.getPlayer(), game, 1.00);
+                                    Score gamePlayerScore = new Score(gamePlayer.getPlayer(), game, 0.50);
                                     scoreRepository.save(gamePlayerScore);
                                 }
                             }

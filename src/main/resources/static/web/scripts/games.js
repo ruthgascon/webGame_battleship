@@ -95,16 +95,13 @@ $( document ).ready(function() {
 						a.setAttribute("class", "joinButton");
 					}
 					row.append(tdEmpty);
-
 				}
 			}
 			var td = document.createElement('td');
 			td.classList.add("playColumn");
 			var icon = document.createElement('i');
-			//if the 
 			if (match == true){
 				icon.classList.add("fas","fa-play");
-
 				var a = document.createElement('a');
 				var linkText = document.createTextNode("my title text");
 				a.appendChild(icon);

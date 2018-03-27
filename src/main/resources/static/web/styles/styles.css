@@ -25,6 +25,18 @@ h3{
 	justify-content: center;
 }
 
+.right {
+	text-decoration:  none;
+	display: flex;
+	justify-content: flex-end;
+}
+
+.left {
+	text-decoration:  none;
+	display: flex;
+	justify-content: flex-start;
+}
+
 .centeredContent {
 	text-align: center;
 }
@@ -156,7 +168,6 @@ input:-webkit-autofill {
 	background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 }
 
-/* Modal Content */
 .modal-content {
 	position: relative;
 	background-color: #fefefe;
@@ -198,7 +209,6 @@ input:-webkit-autofill {
 
 .modal-header {
 	padding: 2px 16px;
-	/*	background-color: #5cb85c;*/
 	background-color: #ffe0b3;
 	color: white;
 }
@@ -220,7 +230,9 @@ input:-webkit-autofill {
 input {
 	border-radius: 5px;
 	width: 150px;
-	height: 15px;
+	height: 20px;
+	font-size: 14px;
+	padding-left: 5px;
 }
 
 .spaceLogin {
@@ -263,9 +275,6 @@ input {
 	border-style: solid;
 	border-width: 1px;
 	padding: 1px 7px 2px;
-	/*	box-shadow: 2px 2px 2px rgb(216, 216, 216);*/
-	/*	background-color: white;*/
-	/*	border-radius: 5px;*/
 }
 
 .generalButton button {
@@ -301,36 +310,27 @@ input {
 .gameTable {
 	margin: auto;
 	margin-bottom: 30px;
-	/* table-layout:fixed; */
 }
 
 .gameTable tr {
-	/* border: 1px solid #999999; */
 	text-align: center;
 }
 
 .gameTable th {
 	background-color: #001a33;
-	
-	height: 48px;
-	width: 48px;
-	
 	border: 1px solid #999999;
 	text-align: center;
 	color: #d9d9d9;
 }
 
 .gameTable td {
-	overflow: hidden;
 	background-color: #003366;
-	/*
-	width: 48px;
-	height: 48px;
-*/
 	border: 1px solid #00264d;
-	padding: 0 !important;
 	text-align: center;
 	color: #d9d9d9;
+	padding: 0 !important;
+	width: 48px !important;
+	height: 41px !important;
 }
 
 .coloredSubmarine {
@@ -364,7 +364,6 @@ input {
 }
 
 .hitShip div{
-	/*	background-color: #990000;*/
 	width: 30px;
 	height: 30px;
 	margin: auto;
@@ -372,9 +371,7 @@ input {
 	background-image: url("../images/fire.png");
 	background-size: contain;
 	background-color: transparent;
-	/*	background-image: url("paper.gif");*/
 }
-
 
 .hitShip div p{
 	color: white;
@@ -390,24 +387,15 @@ input {
 	color: white;
 }
 
-.toDo{
-	text-decoration:  none;
-	display: flex;
-	justify-content: center;
-	color: red;
-	font-weight: bold;
+.backIcon {
+	width: 50px;
+	border-radius: 50px;
+	box-shadow: 1px 1px 2px rgb(216, 216, 216);
+	border-radius: 1px solid black;
 }
 
-.backButton{
-	font-family: 'Quicksand', sans-serif;
-	font-size: 12px;
-	background-color: white;
-	border-radius: 5px;
-	margin-bottom: 10px;
-}
-
-.backButton:hover{
-	background-color: #f8f9fa;
+.backIcon:hover {
+	box-shadow: 0px 0px 0px;
 }
 
 .shipToDrag img {
@@ -443,7 +431,6 @@ input {
 
 .shotPendant{
 	background-image: url(../images/bullseye.png);
-/*	background-image: url(../images/bullseye.svg);*/
 	background-repeat: no-repeat;
 	background-position: center;
 	background-size: contain;
@@ -479,7 +466,6 @@ input {
 
 /*WAITING OPPONENT*/
 .spinner {
-	margin: 0 auto 0; 
 	width: 70px;
 	text-align: center;
 }
@@ -487,8 +473,7 @@ input {
 .spinner > div {
 	width: 5px;
 	height: 5px;
-	background-color: dimgrey;
-
+	background-color: black;
 	border-radius: 100%;
 	display: inline-block;
 	-webkit-animation: sk-bouncedelay 1.4s infinite ease-in-out both;
@@ -529,15 +514,15 @@ input {
 }
 
 .icon{
+	width: 80px;
 	margin: auto;
-	/*	text-align: center;*/
-	width: 100px;
+	margin-top: 0;
+	/* margin-bottom: 0; */
 }
 
 .wavingHand{
-	margin-left: 10;
+	margin-left: 10px;
 	height: 25px;
-	/* width: 30px; */
 }
 
 .instructions{
@@ -547,4 +532,53 @@ input {
 
 .lowOpacity{
 	opacity: 0.6;
+}
+
+.border{
+	border: 1px solid red;
+}
+
+.opponent{
+	font-size: 14px;
+}
+
+.topPageGame{
+	height: 100px;
+}
+
+.moreSpace {
+	display: none;
+}
+
+@media (max-width: 960px) {
+	.topPageGame{
+		text-align: center;
+		margin: auto;
+		min-height: 180px;
+	}
+
+	.topPageGame div {
+		text-decoration:  none;
+		justify-content: center;
+	}
+	
+	.icon {
+		width: 80px;
+		height: 80px;
+		margin-bottom: 0px;
+	}
+
+	.right{
+		display: none !important;
+	} 
+}
+
+@media (max-width: 576px) {
+	.container{
+		display: none;
+	}
+
+	.moreSpace {
+		display: block;
+	}
 }
